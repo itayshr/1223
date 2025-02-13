@@ -1,210 +1,59 @@
-<!DOCTYPE html>
-<html lang="he">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת שעות</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            direction: rtl;
-            background-color: #f5f5f5;
-        }
+function showDaySelection(dayIndex = 0) {
+    // אם עברנו על כל הימים, נשמור את המידע ב-LocalStorage
+    if (dayIndex >= days.length) {
+        localStorage.setItem(username, JSON.stringify({ password, schedule: userSchedule }));
+        alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
+        return;
+    }
 
-        input[type="text"], input[type="password"] {
-            width: 200px;
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
-            border: 1px solid #000;
-            background-color: white;
-            color: black;
-            display: block;
-            margin: 10px auto;
-        }
+    // שמירה על יום הנוכחי
+    const day = days[dayIndex];
+    let selectedSubjects = [];  // משתנה לשמירת המקצועות שנבחרו ליום הנוכחי
 
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            margin: 5px;
-        }
+    // הצגת הכותרת ליום הנבחר
+    scheduleOutput.innerHTML = `<h3>בחר מקצועות ליום ${day}</h3>`;
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    // יצירת מיכל לשמירת הכפתורים של המקצועות
+    let subjectsContainer = document.createElement("div");
+    subjectsContainer.classList.add("subjects-container");
 
-        .day-container {
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #000;
-            background-color: white;
-            text-align: center;
-        }
+    // יצירת כפתור לכל מקצוע
+    subjects.forEach(subject => {
+        let btn = document.createElement("button");
+        btn.classList.add("subject-btn");
+        btn.textContent = subject;
 
-        .subjects-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .subject-btn {
-            margin: 5px;
-            padding: 8px;
-            cursor: pointer;
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
-
-        .subject-btn.selected {
-            background-color: #dc3545;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>📚 מערכת שעות</h1>
-
-    <button id="openGithub">🔗 פתח GitHub</button>
-
-    <h2>🔑 התחבר או הירשם</h2>
-    <input type="text" id="username" placeholder="הכנס שם משתמש" autocomplete="off">
-    <input type="password" id="password" placeholder="הכנס סיסמה">
-    <button id="registerBtn">📌 הרשמה</button>
-    <button id="loginBtn">🔑 התחברות</button>
-
-    <h3>📂 הנה מערכת השעות שלך:</h3>
-    <div id="scheduleOutput"></div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("🔄 דף נטען בהצלחה!");
-
-            document.getElementById("openGithub").addEventListener("click", function () {
-                window.open("https://github.com/itayshr/1223", "_blank");
-            });
-
-            const usernameField = document.getElementById("username");
-            const passwordField = document.getElementById("password");
-            const scheduleOutput = document.getElementById("scheduleOutput");
-
-            const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
-            const subjects = ["ערבית", "מדעים", "מתמטיקה", "תרבות ישראל", "בישול ואפייה", "חינוך", "ספורט", "עברית", "ניהול פיננסי", "אנגלית", "ממרם"];
-
-            function registerUser() {
-                const username = usernameField.value.trim();
-                const password = passwordField.value.trim();
-
-                if (!username || !password) {
-                    alert("⚠ אנא הכנס שם משתמש וסיסמה!");
-                    return;
-                }
-
-                if (localStorage.getItem(username)) {
-                    alert("❌ שם המשתמש כבר קיים! נסה שם אחר.");
-                    return;
-                }
-
-                let userSchedule = {};
-
-                function showDaySelection(dayIndex = 0) {
-                    if (dayIndex >= days.length) {
-                        localStorage.setItem(username, JSON.stringify({ password, schedule: userSchedule }));
-                        alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
-                        return;
-                    }
-
-                    const day = days[dayIndex];
-                    let selectedSubjects = [];
-
-                    scheduleOutput.innerHTML = `<h3>בחר מקצועות ליום ${day}</h3>`;
-
-                    let subjectsContainer = document.createElement("div");
-                    subjectsContainer.classList.add("subjects-container");
-
-                    subjects.forEach(subject => {
-                        let btn = document.createElement("button");
-                        btn.classList.add("subject-btn");
-                        btn.textContent = subject;
-                        btn.addEventListener("click", () => {
-                            if (selectedSubjects.includes(subject)) {
-                                selectedSubjects = selectedSubjects.filter(s => s !== subject);
-                                btn.classList.remove("selected");
-                            } else {
-                                selectedSubjects.push(subject);
-                                btn.classList.add("selected");
-                            }
-                        });
-                        subjectsContainer.appendChild(btn);
-                    });
-
-                    scheduleOutput.appendChild(subjectsContainer);
-
-                    let nextButton = document.createElement("button");
-                    nextButton.textContent = "הבא";
-                    nextButton.addEventListener("click", () => {
-                        userSchedule[day] = selectedSubjects;
-                        showDaySelection(dayIndex + 1);
-                    });
-
-                    scheduleOutput.appendChild(nextButton);
-                }
-
-                showDaySelection();
+        // התנהגות הכפתור כשנלחץ
+        btn.addEventListener("click", () => {
+            if (selectedSubjects.includes(subject)) {
+                // אם המקצוע כבר נבחר, נבטל את הבחירה
+                selectedSubjects = selectedSubjects.filter(s => s !== subject);
+                btn.classList.remove("selected");
+            } else {
+                // אם המקצוע לא נבחר, נוסיף אותו לרשימה
+                selectedSubjects.push(subject);
+                btn.classList.add("selected");
             }
-
-            function loginUser() {
-                const username = usernameField.value.trim();
-                const password = passwordField.value.trim();
-
-                if (!username || !password) {
-                    alert("⚠ אנא הכנס שם משתמש וסיסמה!");
-                    return;
-                }
-
-                const userData = localStorage.getItem(username);
-                if (!userData) {
-                    alert("❌ שם משתמש לא קיים!");
-                    return;
-                }
-
-                const { password: storedPassword, schedule } = JSON.parse(userData);
-                if (storedPassword !== password) {
-                    alert("❌ סיסמה שגויה!");
-                    return;
-                }
-
-                alert(`🎉 ברוך הבא, ${username}!`);
-                displaySchedule(schedule);
-            }
-
-            function displaySchedule(schedule) {
-                scheduleOutput.innerHTML = `<h3>📅 מערכת שעות</h3>`;
-
-                days.forEach(day => {
-                    let dayDiv = document.createElement("div");
-                    dayDiv.classList.add("day-container");
-                    dayDiv.innerHTML = `<strong>${day}</strong>: ${schedule[day] ? schedule[day].join(", ") : "לא נבחרו מקצועות"}`;
-                    scheduleOutput.appendChild(dayDiv);
-                });
-            }
-
-            document.getElementById("registerBtn").addEventListener("click", registerUser);
-            document.getElementById("loginBtn").addEventListener("click", loginUser);
-
-            document.addEventListener("keydown", function (event) {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    loginUser();
-                }
-            });
         });
-    </script>
 
-</body>
-</html>
+        // הוספת הכפתור למיכל
+        subjectsContainer.appendChild(btn);
+    });
+
+    // הצגת המיכל עם כל הכפתורים בדף
+    scheduleOutput.appendChild(subjectsContainer);
+
+    // יצירת כפתור "הבא" להמשך הבחירה ליום הבא
+    let nextButton = document.createElement("button");
+    nextButton.textContent = "הבא";
+    nextButton.addEventListener("click", () => {
+        // שמירת הבחירה של היום הנוכחי
+        userSchedule[day] = selectedSubjects;
+
+        // מעבר ליום הבא
+        showDaySelection(dayIndex + 1);  // השלב הבא
+    });
+
+    // הוספת כפתור "הבא" לדף
+    scheduleOutput.appendChild(nextButton);
+}
