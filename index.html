@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+    <title>מערכת שעות</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>לאסף יש ממש משש קטן !</h1>
-    <p>דן יש לך קטן.</p>
-    מנור שתוק לפני שאני מרביץ לך 
+    <div class="container">
+        <h1>מערכת שעות</h1>
+        <button id="githubBtn">🔗 פתח GitHub</button>
+        <h2>התחבר או הירשם</h2>
+        <input type="text" id="username" placeholder="הכנס שם משתמש">
+        <button id="registerBtn">📌 הרשמה</button>
+        <button id="loginBtn">🔑 התחברות</button>
+
+        <div id="scheduleForm" class="hidden">
+            <h3>בחר מקצועות לכל יום:</h3>
+            <div id="daysContainer"></div>
+            <button id="saveScheduleBtn">💾 שמור מערכת</button>
+        </div>
+
+        <div id="userWelcome" class="hidden">
+            <h2 id="welcomeMessage"></h2>
+            <p>💼 הנה מערכת השעות שלך:</p>
+            <ul id="userSchedule"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
