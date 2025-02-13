@@ -33,18 +33,22 @@
 
     <div id="register-form" style="display:none;">
         <label for="username">שם משתמש:</label>
-        <input type="text" id="username" placeholder="הזן שם משתמש חדש">
+        <input type="text" id="username" placeholder="הזן שם משתמש חדש"><br><br>
+        <label for="password">סיסמה:</label>
+        <input type="password" id="password" placeholder="הזן סיסמה"><br><br>
         <button onclick="createNewUser()">הרשם</button>
     </div>
 
     <div id="login-form" style="display:none;">
         <label for="login-username">שם משתמש:</label>
-        <input type="text" id="login-username" placeholder="הזן את שם המשתמש שלך">
+        <input type="text" id="login-username" placeholder="הזן את שם המשתמש שלך"><br><br>
+        <label for="login-password">סיסמה:</label>
+        <input type="password" id="login-password" placeholder="הזן את הסיסמה שלך"><br><br>
         <button onclick="loginUser()">התחבר</button>
     </div>
 
     <div id="schedule-form" style="display:none;">
-        <h2>בחר את המקצועות לכל יום</h2>
+        <h2>בחר את המקצועות ליום ראשון</h2>
         <div class="subject-selection">
             <p>ראשון:</p>
             <input type="checkbox" id="subject1"> ערבית
@@ -52,21 +56,11 @@
             <input type="checkbox" id="subject3"> מתמטיקה
             <input type="checkbox" id="subject4"> תרבות ישראל
         </div>
-        <!-- יש לחזור על הקוד הזה לכל יום אחר, כמו שני, שלישי, וכו' -->
         <button onclick="saveSchedule()">שמור מערכת שעות</button>
-    </div>
-
-    <div id="github-link">
-        <button onclick="openGitHub()">פתח את GitHub</button>
     </div>
 
     <script>
         const usersSchedule = {};
-
-        // פונקציה לפתיחת אתר בגוגל
-        function openGitHub() {
-            window.open("https://github.com/itayshr/1223", "_blank");
-        }
 
         // פעולה לבחור רישום או התחברות
         function registerOrLogin(isRegister) {
@@ -81,10 +75,11 @@
         // פונקציה להרשמה של משתמש חדש
         function createNewUser() {
             const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
             if (usersSchedule[username]) {
                 alert("⚠ שם המשתמש כבר קיים.");
             } else {
-                usersSchedule[username] = {};
+                usersSchedule[username] = { password: password, schedule: {} };
                 alert(`✅ נרשמת בהצלחה, ${username}!`);
                 document.getElementById("register-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
@@ -94,12 +89,13 @@
         // פונקציה להתחברות עם משתמש קיים
         function loginUser() {
             const username = document.getElementById("login-username").value;
-            if (usersSchedule[username]) {
+            const password = document.getElementById("login-password").value;
+            if (usersSchedule[username] && usersSchedule[username].password === password) {
                 alert(`שלום ${username}, ברוך הבא למערכת!`);
                 document.getElementById("login-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
             } else {
-                alert("⚠ שם המשתמש לא קיים במערכת.");
+                alert("⚠ שם המשתמש או הסיסמה אינם נכונים.");
             }
         }
 
@@ -112,7 +108,7 @@
             if (document.getElementById("subject3").checked) subjects.push("מתמטיקה");
             if (document.getElementById("subject4").checked) subjects.push("תרבות ישראל");
 
-            usersSchedule[username].schedule = subjects;
+            usersSchedule[username].schedule["ראשון"] = subjects;
             alert("✅ מערכת השעות נשמרה בהצלחה!");
         }
     </script>
