@@ -10,6 +10,7 @@
         input, button, select { margin: 5px; padding: 10px; width: 90%; }
         .hidden { display: none; }
         .item-list { text-align: left; margin-top: 20px; }
+        #itemList li { cursor: pointer; }
     </style>
 </head>
 <body>
@@ -41,7 +42,7 @@
                 <input type="text" id="itemInput" placeholder="הכנס פריט">
                 <button onclick="addItem()">הוסף פריט</button>
             </div>
-            <button onclick="removeItem()">הוצא פריט</button>
+            <button onclick="removeSelectedItems()">הוצא פריטים נבחרים</button>
             <div class="item-list">
                 <h3>רשימת פריטים:</h3>
                 <ul id="itemList"></ul>
@@ -99,14 +100,14 @@
             }
         }
 
-        function removeItem() {
-            const item = document.getElementById('itemInput').value;
-            const index = items.indexOf(item);
-            if (index > -1) {
-                items.splice(index, 1);
-                updateItemList();
-                document.getElementById('itemInput').value = '';
-            }
+        function removeSelectedItems() {
+            const checkboxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                const item = cb.parentElement.textContent;
+                const index = items.indexOf(item);
+                if (index > -1) items.splice(index, 1);
+            });
+            updateItemList();
         }
 
         function updateItemList() {
@@ -114,7 +115,11 @@
             list.innerHTML = '';
             items.forEach(i => {
                 const li = document.createElement('li');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.style.marginLeft = '10px';
                 li.textContent = i;
+                li.appendChild(checkbox);
                 list.appendChild(li);
             });
         }
