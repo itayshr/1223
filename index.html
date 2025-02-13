@@ -200,4 +200,47 @@
             if (storedPass && storedPass === pass) {
                 currentUser = user;
                 document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('bagScreen').classList.remove
+                document.getElementById('bagScreen').classList.remove('hidden');
+                loadSchedule();
+            } else {
+                document.getElementById('loginMessage').textContent = translations[currentLanguage].errorMessage;
+            }
+        }
+
+        // Register Function
+        function register() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            localStorage.setItem(user, pass);
+            alert("המשתמש נרשם בהצלחה!");
+        }
+
+        // Logout Function
+        function logout() {
+            currentUser = '';
+            document.getElementById('bagScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        // Save schedule for the day
+        function saveDay(day) {
+            const subjectList = Array.from(document.getElementById(`day${day}`).selectedOptions).map(option => option.value);
+            localStorage.setItem(`${currentUser}_day${day}`, JSON.stringify(subjectList));
+        }
+
+        // Load schedule when logged in
+        function loadSchedule() {
+            for (let i = 1; i <= 5; i++) {
+                const daySelect = document.getElementById(`day${i}`);
+                const savedSubjects = JSON.parse(localStorage.getItem(`${currentUser}_day${i}`)) || [];
+                savedSubjects.forEach(subject => {
+                    let option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    daySelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
