@@ -12,14 +12,16 @@
             background-color: #f5f5f5;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: 200px;
             padding: 10px;
-            margin: 10px;
+            margin: 5px;
             font-size: 16px;
             border: 1px solid #000;
             background-color: white;
             color: black;
+            display: block;
+            margin: 10px auto;
         }
 
         button {
@@ -45,6 +47,7 @@
 
     <h2>🔑 התחבר או הירשם</h2>
     <input type="text" id="username" placeholder="הכנס שם משתמש" autocomplete="off">
+    <input type="password" id="password" placeholder="הכנס סיסמה">
     <button id="registerBtn">📌 הרשמה</button>
     <button id="loginBtn">🔑 התחברות</button>
 
@@ -60,30 +63,52 @@
             });
 
             const usernameField = document.getElementById("username");
+            const passwordField = document.getElementById("password");
 
-            function handleLoginOrRegister() {
+            function registerUser() {
                 const username = usernameField.value.trim();
-                if (!username) {
-                    alert("⚠ אנא הכנס שם משתמש!");
+                const password = passwordField.value.trim();
+
+                if (!username || !password) {
+                    alert("⚠ אנא הכנס שם משתמש וסיסמה!");
                     return;
                 }
 
                 if (localStorage.getItem(username)) {
+                    alert("❌ שם המשתמש כבר קיים! נסה שם אחר.");
+                    return;
+                }
+
+                localStorage.setItem(username, password); 
+                alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
+            }
+
+            function loginUser() {
+                const username = usernameField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!username || !password) {
+                    alert("⚠ אנא הכנס שם משתמש וסיסמה!");
+                    return;
+                }
+
+                const storedPassword = localStorage.getItem(username);
+
+                if (storedPassword === password) {
                     alert(`🎉 ברוך הבא, ${username}!`);
                 } else {
-                    localStorage.setItem(username, ""); 
-                    alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
+                    alert("❌ שם משתמש או סיסמה שגויים.");
                 }
             }
 
-            document.getElementById("registerBtn").addEventListener("click", handleLoginOrRegister);
-            document.getElementById("loginBtn").addEventListener("click", handleLoginOrRegister);
+            document.getElementById("registerBtn").addEventListener("click", registerUser);
+            document.getElementById("loginBtn").addEventListener("click", loginUser);
 
             // תמיכה בלחיצה על Enter או Space
-            usernameField.addEventListener("keydown", function (event) {
+            document.addEventListener("keydown", function (event) {
                 if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault(); // מונע הוספת רווח בטעות
-                    handleLoginOrRegister();
+                    event.preventDefault(); // מונע הכנסת רווח
+                    loginUser();
                 }
             });
         });
