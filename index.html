@@ -40,19 +40,24 @@
             </div>
             <button onclick="logout()">התנתק</button>
             <div id="savedMessage"></div>
+            <div id="tomorrowItems"></div>
         </div>
     </div>
 
     <script>
         // התחברות ורישום
+        let currentUser = '';
+
         function login() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const storedPass = localStorage.getItem(user);
             if (storedPass && storedPass === pass) {
+                currentUser = user;
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('bagScreen').classList.remove('hidden');
                 loadSchedule(user);
+                showTomorrowItems();
             } else {
                 document.getElementById('loginMessage').innerText = 'שם משתמש או סיסמה שגויים';
             }
@@ -70,11 +75,12 @@
         }
 
         function saveDay(day) {
-            const user = document.getElementById('username').value;
+            const user = currentUser;
             const subjects = document.getElementById(`day${day}`).value;
             localStorage.setItem(`${user}_day${day}`, subjects);
             document.getElementById('savedMessage').innerText = `יום ${day} נשמר!`;
             setTimeout(() => { document.getElementById('savedMessage').innerText = ''; }, 2000);
+            showTomorrowItems();
         }
 
         function loadSchedule(user) {
@@ -91,6 +97,15 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
+            currentUser = '';
+        }
+
+        function showTomorrowItems() {
+            const today = new Date().getDay(); // 0-6 (ראשון הוא 0 בישראל ברוב המקרים כשמודפס)
+            let tomorrow = today + 1;
+            if (tomorrow > 5) tomorrow = 1;
+            const items = localStorage.getItem(`${currentUser}_day${tomorrow}`) || 'אין מקצועות למחר';
+            document.getElementById('tomorrowItems').innerText = `פריטים למחר: ${items}`;
         }
     </script>
 </body>
