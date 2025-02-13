@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ניהול תיק</title>
+    <title>ניהול תיק לבית ספר</title>
     <style>
         body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; }
         #app { max-width: 400px; margin: auto; }
-        input, select, button { margin: 5px; padding: 10px; width: 90%; }
+        input, button { margin: 5px; padding: 10px; width: 90%; }
         .hidden { display: none; }
         .item-list { text-align: left; margin-top: 20px; }
     </style>
@@ -16,7 +16,7 @@
     <div id="app">
         <!-- מסך התחברות -->
         <div id="loginScreen">
-            <h2>התחבר למערכת</h2>
+            <h2>התחבר למערכת בית הספר</h2>
             <input type="text" id="username" placeholder="שם משתמש">
             <input type="password" id="password" placeholder="סיסמה">
             <button onclick="login()">התחבר</button>
@@ -24,22 +24,9 @@
             <p id="loginMessage"></p>
         </div>
 
-        <!-- מסך בחירת מערכת -->
-        <div id="systemScreen" class="hidden">
-            <h2>בחר מערכת שעות</h2>
-            <select id="systemSelect">
-                <option value="בית ספר">בית ספר</option>
-                <option value="עבודה">עבודה</option>
-                <option value="טיול">טיול</option>
-                <option value="אחר">אחר</option>
-            </select>
-            <input type="text" id="customSystem" placeholder="הכנס מערכת מותאמת אישית" class="hidden">
-            <button onclick="startManagement()">המשך</button>
-        </div>
-
         <!-- מסך ניהול תיק -->
         <div id="bagScreen" class="hidden">
-            <h2>ניהול תיק</h2>
+            <h2>ניהול תיק לבית הספר</h2>
             <input type="text" id="itemInput" placeholder="הכנס פריט">
             <button onclick="addItem()">הוסף פריט</button>
             <button onclick="removeItem()">הוצא פריט</button>
@@ -59,7 +46,7 @@
             const storedPass = localStorage.getItem(user);
             if (storedPass && storedPass === pass) {
                 document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('systemScreen').classList.remove('hidden');
+                document.getElementById('bagScreen').classList.remove('hidden');
             } else {
                 document.getElementById('loginMessage').innerText = 'שם משתמש או סיסמה שגויים';
             }
@@ -68,42 +55,12 @@
         function register() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
-            const system = document.getElementById('systemSelect').value;
-            let finalSystem = system;
-            if (system === 'אחר') {
-                finalSystem = document.getElementById('customSystem').value;
-            }
-            if (user && pass && finalSystem) {
-                localStorage.setItem(user, JSON.stringify({ password: pass, system: finalSystem }));
+            if (user && pass) {
+                localStorage.setItem(user, pass);
                 document.getElementById('loginMessage').innerText = 'נרשמת בהצלחה! כעת תוכל להתחבר';
             } else {
-                document.getElementById('loginMessage').innerText = 'יש להזין שם משתמש, סיסמה ומערכת שעות';
+                document.getElementById('loginMessage').innerText = 'יש להזין שם משתמש וסיסמה';
             }
-        }
-
-        document.getElementById('systemSelect').addEventListener('change', function() {
-            if (this.value === 'אחר') {
-                document.getElementById('customSystem').classList.remove('hidden');
-            } else {
-                document.getElementById('customSystem').classList.add('hidden');
-            }
-        });
-
-        // בחירת מערכת והתחלת ניהול
-        function startManagement() {
-            const system = document.getElementById('systemSelect').value;
-            if (system === 'אחר') {
-                const customSystem = document.getElementById('customSystem').value;
-                if (!customSystem) {
-                    alert('יש להזין מערכת מותאמת אישית');
-                    return;
-                }
-                localStorage.setItem('selectedSystem', customSystem);
-            } else {
-                localStorage.setItem('selectedSystem', system);
-            }
-            document.getElementById('systemScreen').classList.add('hidden');
-            document.getElementById('bagScreen').classList.remove('hidden');
         }
 
         // ניהול פריטים בתיק
