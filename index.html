@@ -18,22 +18,34 @@
 </head>
 <body>
     <div id="app">
+        <!-- Language Selection Screen -->
+        <div id="languageScreen">
+            <h2>בחר שפה</h2>
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="he">עברית</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ar">العربية</option>
+                <option value="ru">Русский</option>
+            </select>
+        </div>
+
         <!-- Login Screen -->
-        <div id="loginScreen">
-            <h2>התחבר למערכת בית הספר</h2>
+        <div id="loginScreen" class="hidden">
+            <h2 id="loginTitle">התחבר למערכת בית הספר</h2>
             <input type="text" id="username" placeholder="שם משתמש">
             <input type="password" id="password" placeholder="סיסמה">
-            <button onclick="login()">התחבר</button>
-            <button onclick="register()">הירשם</button>
+            <button onclick="login()" id="loginButton">התחבר</button>
+            <button onclick="register()" id="registerButton">הירשם</button>
             <p id="loginMessage"></p>
         </div>
 
         <!-- School Bag Management Screen -->
         <div id="bagScreen" class="hidden">
-            <h2>ניהול תיק לבית הספר</h2>
+            <h2 id="bagTitle">ניהול תיק לבית הספר</h2>
 
             <!-- Weather and Outfit Suggestion -->
-            <h3>המלצת לבוש:</h3>
+            <h3 id="outfitTitle">המלצת לבוש:</h3>
             <div id="weatherContainer">
                 <p id="weather"></p>
                 <p id="outfitSuggestion"></p>
@@ -41,7 +53,7 @@
 
             <!-- Schedule Management -->
             <div id="schedule">
-                <h3>מערכת שעות:</h3>
+                <h3 id="scheduleTitle">מערכת שעות:</h3>
                 <div id="days">
                     <div>ראשון: <select id="day1" multiple></select><button onclick="saveDay(1)">שמור</button></div>
                     <div>שני: <select id="day2" multiple></select><button onclick="saveDay(2)">שמור</button></div>
@@ -52,13 +64,13 @@
             </div>
 
             <!-- Reminder Feature -->
-            <h3>תזכורת למחר:</h3>
+            <h3 id="reminderTitle">תזכורת למחר:</h3>
             <input type="text" id="tomorrowReminder" placeholder="הזן תזכורת...">
             <button id="setReminderBtn">שמור תזכורת</button>
             <div id="reminderDisplay"></div>
 
             <!-- Logout Button -->
-            <button onclick="logout()" style="margin-top:20px; background-color:#dc3545;">התנתק</button>
+            <button onclick="logout()" style="margin-top:20px; background-color:#dc3545;" id="logoutButton">התנתק</button>
 
             <!-- Saved Message and Tomorrow Items -->
             <div id="savedMessage"></div>
@@ -71,6 +83,107 @@
         const weatherAPIKey = 'bfba7f78869e4222b89154845251302';  // API key for weather
 
         let currentUser = '';
+        let currentLanguage = 'he'; // Default language is Hebrew
+
+        // Language change function
+        function changeLanguage() {
+            const language = document.getElementById('languageSelect').value;
+            currentLanguage = language;
+            loadTextByLanguage(language);
+        }
+
+        // Function to load text according to the selected language
+        function loadTextByLanguage(language) {
+            const translations = {
+                he: {
+                    loginTitle: "התחבר למערכת בית הספר",
+                    bagTitle: "ניהול תיק לבית הספר",
+                    outfitTitle: "המלצת לבוש:",
+                    scheduleTitle: "מערכת שעות:",
+                    reminderTitle: "תזכורת למחר:",
+                    loginButton: "התחבר",
+                    registerButton: "הירשם",
+                    logoutButton: "התנתק",
+                    saveButton: "שמור",
+                    reminderPlaceholder: "הזן תזכורת...",
+                    savedMessage: "היום נשמר עם המקצועות:",
+                    errorMessage: "שם משתמש או סיסמה שגויים"
+                },
+                en: {
+                    loginTitle: "Login to School System",
+                    bagTitle: "School Bag Management",
+                    outfitTitle: "Outfit Suggestion:",
+                    scheduleTitle: "Schedule:",
+                    reminderTitle: "Reminder for Tomorrow:",
+                    loginButton: "Login",
+                    registerButton: "Register",
+                    logoutButton: "Logout",
+                    saveButton: "Save",
+                    reminderPlaceholder: "Enter reminder...",
+                    savedMessage: "Today saved with the following subjects:",
+                    errorMessage: "Incorrect username or password"
+                },
+                es: {
+                    loginTitle: "Iniciar sesión en el sistema escolar",
+                    bagTitle: "Gestión de la mochila escolar",
+                    outfitTitle: "Sugerencia de vestimenta:",
+                    scheduleTitle: "Horario:",
+                    reminderTitle: "Recordatorio para mañana:",
+                    loginButton: "Iniciar sesión",
+                    registerButton: "Registrarse",
+                    logoutButton: "Cerrar sesión",
+                    saveButton: "Guardar",
+                    reminderPlaceholder: "Ingresa un recordatorio...",
+                    savedMessage: "Hoy guardado con las siguientes materias:",
+                    errorMessage: "Nombre de usuario o contraseña incorrectos"
+                },
+                ar: {
+                    loginTitle: "تسجيل الدخول إلى نظام المدرسة",
+                    bagTitle: "إدارة حقيبة المدرسة",
+                    outfitTitle: "اقتراح الملابس:",
+                    scheduleTitle: "الجدول الزمني:",
+                    reminderTitle: "تذكير لليوم التالي:",
+                    loginButton: "تسجيل الدخول",
+                    registerButton: "سجل",
+                    logoutButton: "تسجيل الخروج",
+                    saveButton: "حفظ",
+                    reminderPlaceholder: "أدخل تذكير...",
+                    savedMessage: "اليوم تم حفظه بالمواد التالية:",
+                    errorMessage: "اسم المستخدم أو كلمة المرور غير صحيحة"
+                },
+                ru: {
+                    loginTitle: "Войти в школьную систему",
+                    bagTitle: "Управление школьным рюкзаком",
+                    outfitTitle: "Предложение по одежде:",
+                    scheduleTitle: "Расписание:",
+                    reminderTitle: "Напоминание на завтра:",
+                    loginButton: "Войти",
+                    registerButton: "Зарегистрироваться",
+                    logoutButton: "Выйти",
+                    saveButton: "Сохранить",
+                    reminderPlaceholder: "Введите напоминание...",
+                    savedMessage: "Сегодня сохранено с такими предметами:",
+                    errorMessage: "Неверное имя пользователя или пароль"
+                }
+            };
+
+            // Apply translations based on the selected language
+            document.getElementById('loginTitle').textContent = translations[language].loginTitle;
+            document.getElementById('bagTitle').textContent = translations[language].bagTitle;
+            document.getElementById('outfitTitle').textContent = translations[language].outfitTitle;
+            document.getElementById('scheduleTitle').textContent = translations[language].scheduleTitle;
+            document.getElementById('reminderTitle').textContent = translations[language].reminderTitle;
+            document.getElementById('loginButton').textContent = translations[language].loginButton;
+            document.getElementById('registerButton').textContent = translations[language].registerButton;
+            document.getElementById('logoutButton').textContent = translations[language].logoutButton;
+            document.getElementById('setReminderBtn').textContent = translations[language].saveButton;
+            document.getElementById('tomorrowReminder').placeholder = translations[language].reminderPlaceholder;
+        }
+
+        // Initialize language settings
+        window.onload = function() {
+            loadTextByLanguage(currentLanguage);
+        };
 
         // Login Function
         function login() {
