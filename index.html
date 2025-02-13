@@ -1,162 +1,246 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // קבלת כל האלמנטים שצריך לעבוד איתם בדף
-    const authScreen = document.getElementById("authScreen");
-    const mainContent = document.getElementById("mainContent");
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const showRegister = document.getElementById("showRegister");
-    const showLogin = document.getElementById("showLogin");
-    const loginUsername = document.getElementById("loginUsername");
-    const loginPassword = document.getElementById("loginPassword");
-    const registerUsername = document.getElementById("registerUsername");
-    const registerPassword = document.getElementById("registerPassword");
-    const themeToggle = document.getElementById("themeToggle");
-    const countrySelect = document.getElementById("country");
-    const citySelect = document.getElementById("city");
-    const getWeatherBtn = document.getElementById("getWeather");
-    const weatherInfo = document.getElementById("weatherInfo");
-    const outfitSuggestion = document.getElementById("outfitSuggestion");
-    const sundaySubjectsInput = document.getElementById("sundaySubjects");
-    const mondaySubjectsInput = document.getElementById("mondaySubjects");
-    const tuesdaySubjectsInput = document.getElementById("tuesdaySubjects");
-    const wednesdaySubjectsInput = document.getElementById("wednesdaySubjects");
-    const thursdaySubjectsInput = document.getElementById("thursdaySubjects");
-    const fridaySubjectsInput = document.getElementById("fridaySubjects");
-    const saturdaySubjectsInput = document.getElementById("saturdaySubjects");
-    const saveScheduleBtn = document.getElementById("saveSchedule");
-    const tomorrowReminder = document.getElementById("tomorrowReminder");
-    const setReminderBtn = document.getElementById("setReminder");
-    const reminderDisplay = document.getElementById("reminderDisplay");
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול תיק לבית ספר</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; background-color: #f0f4f7; color: #333; }
+        #app { max-width: 500px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2); background-color: #fff; }
+        input, button, select { margin: 5px; padding: 10px; width: 90%; border: none; border-radius: 8px; box-sizing: border-box; }
+        button { background-color: #007BFF; color: #fff; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        .hidden { display: none; }
+        .item-list { text-align: left; margin-top: 20px; }
+        #itemList li { cursor: pointer; }
+        h2, h3 { color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Language Selection Screen -->
+        <div id="languageScreen">
+            <h2>בחר שפה</h2>
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="he">עברית</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ar">العربية</option>
+                <option value="ru">Русский</option>
+            </select>
+            <button onclick="goToLoginScreen()">המשך</button>
+        </div>
 
-    // מערך של משתמשים שנרשמו
-    const users = [];
-    let currentUser = null;
+        <!-- Login Screen -->
+        <div id="loginScreen" class="hidden">
+            <h2 id="loginTitle">התחבר למערכת בית הספר</h2>
+            <input type="text" id="username" placeholder="שם משתמש">
+            <input type="password" id="password" placeholder="סיסמה">
+            <button onclick="login()" id="loginButton">התחבר</button>
+            <button onclick="register()" id="registerButton">הירשם</button>
+            <p id="loginMessage"></p>
+        </div>
 
-    // הצגת טופס רישום
-    showRegister.addEventListener("click", () => {
-        loginForm.classList.add("hidden");
-        registerForm.classList.remove("hidden");
-    });
+        <!-- School Bag Management Screen -->
+        <div id="bagScreen" class="hidden">
+            <h2 id="bagTitle">ניהול תיק לבית הספר</h2>
 
-    // הצגת טופס התחברות
-    showLogin.addEventListener("click", () => {
-        registerForm.classList.add("hidden");
-        loginForm.classList.remove("hidden");
-    });
+            <!-- Weather and Outfit Suggestion -->
+            <h3 id="outfitTitle">המלצת לבוש:</h3>
+            <div id="weatherContainer">
+                <p id="weather"></p>
+                <p id="outfitSuggestion"></p>
+            </div>
 
-    // התחברות למערכת
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault(); // מונע את פעולת ברירת המחדל (שליחת טופס)
-        const username = loginUsername.value;
-        const password = loginPassword.value;
+            <!-- Schedule Management -->
+            <div id="schedule">
+                <h3 id="scheduleTitle">מערכת שעות:</h3>
+                <div id="days">
+                    <div>ראשון: <select id="day1" multiple></select><button onclick="saveDay(1)">שמור</button></div>
+                    <div>שני: <select id="day2" multiple></select><button onclick="saveDay(2)">שמור</button></div>
+                    <div>שלישי: <select id="day3" multiple></select><button onclick="saveDay(3)">שמור</button></div>
+                    <div>רביעי: <select id="day4" multiple></select><button onclick="saveDay(4)">שמור</button></div>
+                    <div>חמישי: <select id="day5" multiple></select><button onclick="saveDay(5)">שמור</button></div>
+                </div>
+            </div>
 
-        currentUser = users.find(user => user.username === username && user.password === password);
+            <!-- Reminder Feature -->
+            <h3 id="reminderTitle">תזכורת למחר:</h3>
+            <input type="text" id="tomorrowReminder" placeholder="הזן תזכורת...">
+            <button id="setReminderBtn">שמור תזכורת</button>
+            <div id="reminderDisplay"></div>
 
-        if (currentUser) {
-            authScreen.style.display = "none";
-            mainContent.style.display = "block";
-        } else {
-            alert("פרטי התחברות שגויים");
-        }
-    });
+            <!-- Logout Button -->
+            <button onclick="logout()" style="margin-top:20px; background-color:#dc3545;" id="logoutButton">התנתק</button>
 
-    // רישום משתמש חדש
-    registerForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = registerUsername.value;
-        const password = registerPassword.value;
+            <!-- Saved Message and Tomorrow Items -->
+            <div id="savedMessage"></div>
+            <div id="tomorrowItems" style="margin-top:20px; font-weight:bold;"></div>
+        </div>
+    </div>
 
-        // בודק אם כבר יש משתמש עם שם המשתמש הזה
-        if (users.some(user => user.username === username)) {
-            alert("השם כבר קיים");
-        } else {
-            users.push({ username, password });
-            alert("הרישום הצליח!");
-            showLogin.click();
-        }
-    });
+    <script>
+        const subjects = ['עברית', 'מתמטיקה', 'אנגלית', 'היסטוריה', 'מדעים', 'ספורט', 'תורה', 'מוסיקה', 'אחר'];
+        const weatherAPIKey = 'bfba7f78869e4222b89154845251302';  // API key for weather
 
-    // קבלת מידע על מזג האוויר
-    getWeatherBtn.addEventListener("click", async () => {
-        const city = citySelect.value;
-        const country = countrySelect.value;
+        let currentUser = '';
+        let currentLanguage = 'he'; // Default language is Hebrew
 
-        if (city && country) {
-            try {
-                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=bfba7f78869e4222b89154845251302&q=${city},${country}`);
-                const weather = await response.json();
-                weatherInfo.textContent = `מזג האוויר ב-${city}: ${weather.current.temp_c}°C, ${weather.current.condition.text}`;
-                suggestOutfit(weather);
-            } catch (error) {
-                alert("שגיאה בטעינת מזג האוויר");
-            }
-        } else {
-            alert("בחר עיר ומדינה");
-        }
-    });
-
-    // הצעת לבוש על פי מזג האוויר
-    function suggestOutfit(weather) {
-        let suggestion = "";
-        if (weather.current.temp_c < 10) {
-            suggestion = "קר מאוד! כדאי לקחת מעיל וצעיף.";
-        } else if (weather.current.temp_c < 20) {
-            suggestion = "קצת קריר! מעיל קל יהיה טוב.";
-        } else {
-            suggestion = "חמים! תלבש משהו קל.";
+        // Language change function
+        function changeLanguage() {
+            const language = document.getElementById('languageSelect').value;
+            currentLanguage = language;
+            loadTextByLanguage(language);
         }
 
-        // אם יש גשם, מוסיף הצעה לקחת מטרייה
-        if (weather.current.condition.text.toLowerCase().includes("rain")) {
-            suggestion += " אל תשכח מטרייה!";
+        // Function to load text according to the selected language
+        function loadTextByLanguage(language) {
+            const translations = {
+                he: {
+                    loginTitle: "התחבר למערכת בית הספר",
+                    bagTitle: "ניהול תיק לבית הספר",
+                    outfitTitle: "המלצת לבוש:",
+                    scheduleTitle: "מערכת שעות:",
+                    reminderTitle: "תזכורת למחר:",
+                    loginButton: "התחבר",
+                    registerButton: "הירשם",
+                    logoutButton: "התנתק",
+                    saveButton: "שמור",
+                    reminderPlaceholder: "הזן תזכורת...",
+                    savedMessage: "היום נשמר עם המקצועות:",
+                    errorMessage: "שם משתמש או סיסמה שגויים"
+                },
+                en: {
+                    loginTitle: "Login to School System",
+                    bagTitle: "School Bag Management",
+                    outfitTitle: "Outfit Suggestion:",
+                    scheduleTitle: "Schedule:",
+                    reminderTitle: "Reminder for Tomorrow:",
+                    loginButton: "Login",
+                    registerButton: "Register",
+                    logoutButton: "Logout",
+                    saveButton: "Save",
+                    reminderPlaceholder: "Enter reminder...",
+                    savedMessage: "Today saved with the following subjects:",
+                    errorMessage: "Incorrect username or password"
+                },
+                es: {
+                    loginTitle: "Iniciar sesión en el sistema escolar",
+                    bagTitle: "Gestión de la mochila escolar",
+                    outfitTitle: "Sugerencia de vestimenta:",
+                    scheduleTitle: "Horario:",
+                    reminderTitle: "Recordatorio para mañana:",
+                    loginButton: "Iniciar sesión",
+                    registerButton: "Registrarse",
+                    logoutButton: "Cerrar sesión",
+                    saveButton: "Guardar",
+                    reminderPlaceholder: "Ingresa un recordatorio...",
+                    savedMessage: "Hoy guardado con las siguientes materias:",
+                    errorMessage: "Nombre de usuario o contraseña incorrectos"
+                },
+                ar: {
+                    loginTitle: "تسجيل الدخول إلى نظام المدرسة",
+                    bagTitle: "إدارة حقيبة المدرسة",
+                    outfitTitle: "اقتراح الملابس:",
+                    scheduleTitle: "الجدول الزمني:",
+                    reminderTitle: "تذكير لليوم التالي:",
+                    loginButton: "تسجيل الدخول",
+                    registerButton: "سجل",
+                    logoutButton: "تسجيل الخروج",
+                    saveButton: "حفظ",
+                    reminderPlaceholder: "أدخل تذكير...",
+                    savedMessage: "اليوم تم حفظه بالمواد التالية:",
+                    errorMessage: "اسم المستخدم أو كلمة المرور غير صحيحة"
+                },
+                ru: {
+                    loginTitle: "Войти в школьную систему",
+                    bagTitle: "Управление школьным рюкзаком",
+                    outfitTitle: "Предложение по одежде:",
+                    scheduleTitle: "Расписание:",
+                    reminderTitle: "Напоминание на завтра:",
+                    loginButton: "Войти",
+                    registerButton: "Зарегистрироваться",
+                    logoutButton: "Выйти",
+                    saveButton: "Сохранить",
+                    reminderPlaceholder: "Введите напоминание...",
+                    savedMessage: "Сегодня сохранено с такими предметами:",
+                    errorMessage: "Неверное имя пользователя или пароль"
+                }
+            };
+
+            // Apply translations based on the selected language
+            document.getElementById('loginTitle').textContent = translations[language].loginTitle;
+            document.getElementById('bagTitle').textContent = translations[language].bagTitle;
+            document.getElementById('outfitTitle').textContent = translations[language].outfitTitle;
+            document.getElementById('scheduleTitle').textContent = translations[language].scheduleTitle;
+            document.getElementById('reminderTitle').textContent = translations[language].reminderTitle;
+            document.getElementById('loginButton').textContent = translations[language].loginButton;
+            document.getElementById('registerButton').textContent = translations[language].registerButton;
+            document.getElementById('logoutButton').textContent = translations[language].logoutButton;
+            document.getElementById('setReminderBtn').textContent = translations[language].saveButton;
+            document.getElementById('tomorrowReminder').placeholder = translations[language].reminderPlaceholder;
         }
 
-        outfitSuggestion.textContent = suggestion;
-    }
-
-    // שמירת לוח זמנים לשבוע
-    saveScheduleBtn.addEventListener("click", () => {
-        const schedule = {
-            sunday: sundaySubjectsInput.value.trim(),
-            monday: mondaySubjectsInput.value.trim(),
-            tuesday: tuesdaySubjectsInput.value.trim(),
-            wednesday: wednesdaySubjectsInput.value.trim(),
-            thursday: thursdaySubjectsInput.value.trim(),
-            friday: fridaySubjectsInput.value.trim(),
-            saturday: saturdaySubjectsInput.value.trim(),
+        // Initialize language settings
+        window.onload = function() {
+            loadTextByLanguage(currentLanguage);
         };
 
-        localStorage.setItem("weeklySchedule", JSON.stringify(schedule));
-        alert("לוח הזמנים נשמר!");
-    });
+        // Go to login screen after language selection
+        function goToLoginScreen() {
+            document.getElementById('languageScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
 
-    // הגדרת תזכורת ליום הבא
-    setReminderBtn.addEventListener("click", () => {
-        const reminder = tomorrowReminder.value.trim();
-        localStorage.setItem("tomorrowReminder", reminder);
-        reminderDisplay.textContent = `תזכורת: ${reminder}`;
-    });
+        // Login Function
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const storedPass = localStorage.getItem(user);
+            if (storedPass && storedPass === pass) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('bagScreen').classList.remove('hidden');
+                loadSchedule();
+            } else {
+                document.getElementById('loginMessage').textContent = translations[currentLanguage].errorMessage;
+            }
+        }
 
-    // טעינת לוח הזמנים שנשמר ב-localStorage
-    const savedSchedule = JSON.parse(localStorage.getItem("weeklySchedule"));
-    if (savedSchedule) {
-        sundaySubjectsInput.value = savedSchedule.sunday;
-        mondaySubjectsInput.value = savedSchedule.monday;
-        tuesdaySubjectsInput.value = savedSchedule.tuesday;
-        wednesdaySubjectsInput.value = savedSchedule.wednesday;
-        thursdaySubjectsInput.value = savedSchedule.thursday;
-        fridaySubjectsInput.value = savedSchedule.friday;
-        saturdaySubjectsInput.value = savedSchedule.saturday;
-    }
+        // Register Function
+        function register() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            localStorage.setItem(user, pass);
+            alert("המשתמש נרשם בהצלחה!");
+        }
 
-    // הצגת תזכורת מה-localStorage
-    const savedReminder = localStorage.getItem("tomorrowReminder");
-    if (savedReminder) {
-        reminderDisplay.textContent = `תזכורת: ${savedReminder}`;
-    }
+        // Logout Function
+        function logout() {
+            currentUser = '';
+            document.getElementById('bagScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
 
-    // שינוי בין מצב בהיר לכהה
-    themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-    });
-});
+        // Save schedule for the day
+        function saveDay(day) {
+            const subjectList = Array.from(document.getElementById(`day${day}`).selectedOptions).map(option => option.value);
+            localStorage.setItem(`${currentUser}_day${day}`, JSON.stringify(subjectList));
+        }
+
+        // Load schedule when logged in
+        function loadSchedule() {
+            for (let i = 1; i <= 5; i++) {
+                const daySelect = document.getElementById(`day${i}`);
+                const savedSubjects = JSON.parse(localStorage.getItem(`${currentUser}_day${i}`)) || [];
+                savedSubjects.forEach(subject => {
+                    let option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    daySelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
