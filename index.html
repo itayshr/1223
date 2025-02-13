@@ -199,6 +199,14 @@
                 </div>
             </div>
 
+            <!-- Add/Remove Subjects -->
+            <h3 id="manageSubjectsTitle">ניהול מקצועות:</h3>
+            <input type="text" id="newSubject" placeholder="הוסף מקצוע חדש">
+            <button onclick="addSubject()" class="secondary">הוסף מקצוע</button>
+            <ul id="subjectList">
+                <!-- Subjects will be dynamically added here -->
+            </ul>
+
             <!-- Reminder Feature -->
             <h3 id="reminderTitle">תזכורת למחר:</h3>
             <input type="text" id="tomorrowReminder" placeholder="הזן תזכורת...">
@@ -223,7 +231,7 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        const subjects = ['עברית', 'מתמטיקה', 'אנגלית', 'היסטוריה', 'מדעים', 'ספורט', 'תורה', 'מוסיקה', 'אחר'];
+        let subjects = JSON.parse(localStorage.getItem("subjects")) || ['עברית', 'מתמטיקה', 'אנגלית', 'היסטוריה', 'מדעים', 'ספורט', 'תורה', 'מוסיקה', 'אחר'];
         const weatherAPIKey = 'bfba7f78869e4222b89154845251302';  // API key for weather
 
         let currentUser = '';
@@ -237,6 +245,7 @@
                 outfitTitle: "המלצת לבוש:",
                 scheduleTitle: "מערכת שעות:",
                 reminderTitle: "תזכורת למחר:",
+                manageSubjectsTitle: "ניהול מקצועות:",
                 loginButton: "התחבר",
                 registerButton: "הירשם",
                 logoutButton: "התנתק",
@@ -251,6 +260,7 @@
                 outfitTitle: "Outfit Suggestion:",
                 scheduleTitle: "Schedule:",
                 reminderTitle: "Reminder for Tomorrow:",
+                manageSubjectsTitle: "Manage Subjects:",
                 loginButton: "Login",
                 registerButton: "Register",
                 logoutButton: "Logout",
@@ -265,6 +275,7 @@
                 outfitTitle: "Sugerencia de vestimenta:",
                 scheduleTitle: "Horario:",
                 reminderTitle: "Recordatorio para mañana:",
+                manageSubjectsTitle: "Gestionar materias:",
                 loginButton: "Iniciar sesión",
                 registerButton: "Registrarse",
                 logoutButton: "Cerrar sesión",
@@ -279,6 +290,7 @@
                 outfitTitle: "اقتراح الملابس:",
                 scheduleTitle: "الجدول الزمني:",
                 reminderTitle: "تذكير لليوم التالي:",
+                manageSubjectsTitle: "إدارة المواد:",
                 loginButton: "تسجيل الدخول",
                 registerButton: "سجل",
                 logoutButton: "تسجيل الخروج",
@@ -293,6 +305,7 @@
                 outfitTitle: "Предложение по одежде:",
                 scheduleTitle: "Расписание:",
                 reminderTitle: "Напоминание на завтра:",
+                manageSubjectsTitle: "Управление предметами:",
                 loginButton: "Войти",
                 registerButton: "Зарегистрироваться",
                 logoutButton: "Выйти",
@@ -317,6 +330,7 @@
             document.getElementById('outfitTitle').textContent = translations[language].outfitTitle;
             document.getElementById('scheduleTitle').textContent = translations[language].scheduleTitle;
             document.getElementById('reminderTitle').textContent = translations[language].reminderTitle;
+            document.getElementById('manageSubjectsTitle').textContent = translations[language].manageSubjectsTitle;
             document.getElementById('loginButton').textContent = translations[language].loginButton;
             document.getElementById('registerButton').textContent = translations[language].registerButton;
             document.getElementById('logoutButton').textContent = translations[language].logoutButton;
@@ -328,6 +342,7 @@
         window.onload = function() {
             loadTextByLanguage(currentLanguage);
             loadTheme();
+            loadSubjects();
         };
 
         // Go to login screen after language selection
@@ -464,6 +479,46 @@
 
         function showAbout() {
             alert("זוהי מערכת לניהול תיק בית ספר. נבנתה עם ❤️ על ידי צוות הפיתוח.");
+        }
+
+        // Function to load subjects into the list
+        function loadSubjects() {
+            const subjectList = document.getElementById('subjectList');
+            subjectList.innerHTML = '';
+            subjects.forEach((subject, index) => {
+                const li = document.createElement('li');
+                li.textContent = subject;
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'הסר';
+                removeButton.classList.add('danger');
+                removeButton.onclick = () => removeSubject(index);
+                li.appendChild(removeButton);
+                subjectList.appendChild(li);
+            });
+        }
+
+        // Function to add a new subject
+        function addSubject() {
+            const newSubject = document.getElementById('newSubject').value.trim();
+            if (newSubject && !subjects.includes(newSubject)) {
+                subjects.push(newSubject);
+                localStorage.setItem("subjects", JSON.stringify(subjects));
+                loadSubjects();
+                loadSchedule();
+                document.getElementById('newSubject').value = '';
+                showToast("מקצוע נוסף בהצלחה!");
+            } else {
+                showToast("המקצוע כבר קיים או שהשדה ריק.");
+            }
+        }
+
+        // Function to remove a subject
+        function removeSubject(index) {
+            subjects.splice(index, 1);
+            localStorage.setItem("subjects", JSON.stringify(subjects));
+            loadSubjects();
+            loadSchedule();
+            showToast("מקצוע הוסר בהצלחה!");
         }
     </script>
 </body>
