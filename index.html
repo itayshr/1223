@@ -7,26 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>מערכת שעות</h1>
-        <button id="githubBtn">🔗 פתח GitHub</button>
-        <h2>התחבר או הירשם</h2>
-        <input type="text" id="username" placeholder="הכנס שם משתמש">
-        <button id="registerBtn">📌 הרשמה</button>
-        <button id="loginBtn">🔑 התחברות</button>
 
-        <div id="scheduleForm" class="hidden">
-            <h3>בחר מקצועות לכל יום:</h3>
-            <div id="daysContainer"></div>
-            <button id="saveScheduleBtn">💾 שמור מערכת</button>
-        </div>
+    <h1>📚 מערכת שעות</h1>
 
-        <div id="userWelcome" class="hidden">
-            <h2 id="welcomeMessage"></h2>
-            <p>💼 הנה מערכת השעות שלך:</p>
-            <ul id="userSchedule"></ul>
-        </div>
-    </div>
+    <button id="openGithub">🔗 פתח GitHub</button>
+
+    <h2>🔑 התחבר או הירשם</h2>
+    <input type="text" id="username" placeholder="הכנס שם משתמש">
+    <button id="registerBtn">📌 הרשמה</button>
+    <button id="loginBtn">🔑 התחברות</button>
+
+    <h3>📅 בחר מקצועות לכל יום</h3>
+    <div id="scheduleForm"></div>
+    
+    <button id="saveSchedule" style="display:none;">💾 שמור מערכת</button>
+
+    <h3>📂 הנה מערכת השעות שלך:</h3>
+    <div id="scheduleOutput"></div>
 
     <script src="script.js"></script>
 </body>
