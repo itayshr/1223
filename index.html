@@ -79,9 +79,10 @@
             document.getElementById("registerBtn").addEventListener("click", handleLoginOrRegister);
             document.getElementById("loginBtn").addEventListener("click", handleLoginOrRegister);
 
-            // תמיכה בלחיצה על Enter
+            // תמיכה בלחיצה על Enter או Space
             usernameField.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault(); // מונע הוספת רווח בטעות
                     handleLoginOrRegister();
                 }
             });
