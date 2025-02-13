@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             direction: rtl;
+            background-color: #f5f5f5;
         }
 
         input[type="text"] {
@@ -19,12 +20,22 @@
             border: 1px solid #000;
             background-color: white;
             color: black;
+            pointer-events: auto !important;
+            user-select: auto !important;
         }
 
         button {
             padding: 10px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
 
         .hidden {
@@ -39,7 +50,7 @@
     <button id="openGithub">🔗 פתח GitHub</button>
 
     <h2>🔑 התחבר או הירשם</h2>
-    <input type="text" id="username" placeholder="הכנס שם משתמש">
+    <input type="text" id="username" placeholder="הכנס שם משתמש" autocomplete="off">
     <button id="registerBtn">📌 הרשמה</button>
     <button id="loginBtn">🔑 התחברות</button>
 
@@ -55,14 +66,17 @@
         document.addEventListener("DOMContentLoaded", function () {
             console.log("🔄 דף נטען בהצלחה!");
 
+            // ביטול כל בעיה שמונעת הקלדה
+            const usernameField = document.getElementById("username");
+            usernameField.removeAttribute("disabled");
+            usernameField.style.pointerEvents = "auto";
+            usernameField.style.userSelect = "auto";
+
             document.getElementById("openGithub").addEventListener("click", function () {
                 window.open("https://github.com/itayshr/1223", "_blank");
             });
 
             document.getElementById("registerBtn").addEventListener("click", function () {
-                const usernameField = document.getElementById("username");
-                usernameField.removeAttribute("disabled");  // ביטול חסימה אפשרית
-
                 const username = usernameField.value.trim();
                 if (!username) {
                     alert("⚠ אנא הכנס שם משתמש!");
@@ -72,12 +86,13 @@
                 if (localStorage.getItem(username)) {
                     alert("⚠ שם המשתמש כבר קיים במערכת!");
                 } else {
+                    localStorage.setItem(username, ""); // יצירת משתמש חדש
                     alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
                 }
             });
 
             document.getElementById("loginBtn").addEventListener("click", function () {
-                const username = document.getElementById("username").value.trim();
+                const username = usernameField.value.trim();
                 if (!username) {
                     alert("⚠ אנא הכנס שם משתמש!");
                     return;
