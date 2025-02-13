@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול תיק</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; }
+        #app { max-width: 400px; margin: auto; }
+        input, select, button { margin: 5px; padding: 10px; width: 90%; }
+        .hidden { display: none; }
+        .item-list { text-align: left; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- מסך התחברות -->
+        <div id="loginScreen">
+            <h2>התחבר למערכת</h2>
+            <input type="text" id="username" placeholder="שם משתמש">
+            <input type="password" id="password" placeholder="סיסמה">
+            <button onclick="login()">התחבר</button>
+            <button onclick="register()">הירשם</button>
+            <p id="loginMessage"></p>
+        </div>
+
+        <!-- מסך בחירת מערכת -->
+        <div id="systemScreen" class="hidden">
+            <h2>בחר מערכת</h2>
+            <select id="systemSelect">
+                <option value="בית ספר">בית ספר</option>
+                <option value="עבודה">עבודה</option>
+                <option value="טיול">טיול</option>
+            </select>
+            <button onclick="startManagement()">המשך</button>
+        </div>
+
+        <!-- מסך ניהול תיק -->
+        <div id="bagScreen" class="hidden">
+            <h2>ניהול תיק</h2>
+            <input type="text" id="itemInput" placeholder="הכנס פריט">
+            <button onclick="addItem()">הוסף פריט</button>
+            <button onclick="removeItem()">הוצא פריט</button>
+            <div class="item-list">
+                <h3>רשימת פריטים:</h3>
+                <ul id="itemList"></ul>
+            </div>
+            <button onclick="logout()">התנתק</button>
+        </div>
+    </div>
+
+    <script>
+        // התחברות ורישום
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const storedPass = localStorage.getItem(user);
+            if (storedPass && storedPass === pass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('systemScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('loginMessage').innerText = 'שם משתמש או סיסמה שגויים';
+            }
+        }
+
+        function register() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user && pass) {
+                localStorage.setItem(user, pass);
+                document.getElementById('loginMessage').innerText = 'נרשמת בהצלחה! כעת תוכל להתחבר';
+            } else {
+                document.getElementById('loginMessage').innerText = 'יש להזין שם משתמש וסיסמה';
+            }
+        }
+
+        // בחירת מערכת והתחלת ניהול
+        function startManagement() {
+            document.getElementById('systemScreen').classList.add('hidden');
+            document.getElementById('bagScreen').classList.remove('hidden');
+        }
+
+        // ניהול פריטים בתיק
+        const items = [];
+
+        function addItem() {
+            const item = document.getElementById('itemInput').value;
+            if (item) {
+                items.push(item);
+                updateItemList();
+                document.getElementById('itemInput').value = '';
+            }
+        }
+
+        function removeItem() {
+            const item = document.getElementById('itemInput').value;
+            const index = items.indexOf(item);
+            if (index > -1) {
+                items.splice(index, 1);
+                updateItemList();
+                document.getElementById('itemInput').value = '';
+            }
+        }
+
+        function updateItemList() {
+            const list = document.getElementById('itemList');
+            list.innerHTML = '';
+            items.forEach(i => {
+                const li = document.createElement('li');
+                li.textContent = i;
+                list.appendChild(li);
+            });
+        }
+
+        function logout() {
+            document.getElementById('bagScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>
