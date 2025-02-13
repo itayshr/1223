@@ -4,7 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מערכת שעות</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: 1px solid #000;
+            background-color: white;
+            color: black;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -25,6 +51,46 @@
     <h3>📂 הנה מערכת השעות שלך:</h3>
     <div id="scheduleOutput"></div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("🔄 דף נטען בהצלחה!");
+
+            document.getElementById("openGithub").addEventListener("click", function () {
+                window.open("https://github.com/itayshr/1223", "_blank");
+            });
+
+            document.getElementById("registerBtn").addEventListener("click", function () {
+                const usernameField = document.getElementById("username");
+                usernameField.removeAttribute("disabled");  // ביטול חסימה אפשרית
+
+                const username = usernameField.value.trim();
+                if (!username) {
+                    alert("⚠ אנא הכנס שם משתמש!");
+                    return;
+                }
+
+                if (localStorage.getItem(username)) {
+                    alert("⚠ שם המשתמש כבר קיים במערכת!");
+                } else {
+                    alert(`✅ המשתמש ${username} נרשם בהצלחה!`);
+                }
+            });
+
+            document.getElementById("loginBtn").addEventListener("click", function () {
+                const username = document.getElementById("username").value.trim();
+                if (!username) {
+                    alert("⚠ אנא הכנס שם משתמש!");
+                    return;
+                }
+
+                if (localStorage.getItem(username)) {
+                    alert(`🎉 ברוך הבא, ${username}!`);
+                } else {
+                    alert("⚠ שם המשתמש לא קיים במערכת!");
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
