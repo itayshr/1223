@@ -28,26 +28,18 @@
         <!-- מסך ניהול תיק -->
         <div id="bagScreen" class="hidden">
             <h2>ניהול תיק לבית הספר</h2>
-            <label for="subjectSelect">בחר מקצוע להוספת ציוד:</label>
-            <select id="subjectSelect" onchange="addSubject()">
-                <option value="">--בחר מקצוע--</option>
-                <option value="עברית">עברית</option>
-                <option value="מתמטיקה">מתמטיקה</option>
-                <option value="אנגלית">אנגלית</option>
-                <option value="היסטוריה">היסטוריה</option>
-                <option value="מדעים">מדעים</option>
-                <option value="אחר">אחר</option>
-            </select>
-            <div id="customSubject" class="hidden">
-                <input type="text" id="itemInput" placeholder="הכנס פריט">
-                <button onclick="addItem()">הוסף פריט</button>
-            </div>
-            <button onclick="removeSelectedItems()">הוצא פריטים נבחרים</button>
-            <div class="item-list">
-                <h3>רשימת פריטים:</h3>
-                <ul id="itemList"></ul>
+            <div id="schedule">
+                <h3>מערכת שעות:</h3>
+                <div id="days">
+                    <div>ראשון: <input type="text" id="day1" placeholder="הכנס מקצועות"><button onclick="saveDay(1)">שמור</button></div>
+                    <div>שני: <input type="text" id="day2" placeholder="הכנס מקצועות"><button onclick="saveDay(2)">שמור</button></div>
+                    <div>שלישי: <input type="text" id="day3" placeholder="הכנס מקצועות"><button onclick="saveDay(3)">שמור</button></div>
+                    <div>רביעי: <input type="text" id="day4" placeholder="הכנס מקצועות"><button onclick="saveDay(4)">שמור</button></div>
+                    <div>חמישי: <input type="text" id="day5" placeholder="הכנס מקצועות"><button onclick="saveDay(5)">שמור</button></div>
+                </div>
             </div>
             <button onclick="logout()">התנתק</button>
+            <div id="savedMessage"></div>
         </div>
     </div>
 
@@ -60,6 +52,7 @@
             if (storedPass && storedPass === pass) {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('bagScreen').classList.remove('hidden');
+                loadSchedule(user);
             } else {
                 document.getElementById('loginMessage').innerText = 'שם משתמש או סיסמה שגויים';
             }
@@ -76,52 +69,21 @@
             }
         }
 
-        // ניהול פריטים בתיק
-        const items = [];
+        function saveDay(day) {
+            const user = document.getElementById('username').value;
+            const subjects = document.getElementById(`day${day}`).value;
+            localStorage.setItem(`${user}_day${day}`, subjects);
+            document.getElementById('savedMessage').innerText = `יום ${day} נשמר!`;
+            setTimeout(() => { document.getElementById('savedMessage').innerText = ''; }, 2000);
+        }
 
-        function addSubject() {
-            const subject = document.getElementById('subjectSelect').value;
-            if (subject && subject !== 'אחר') {
-                items.push(subject);
-                updateItemList();
-                document.getElementById('subjectSelect').value = '';
-            } else if (subject === 'אחר') {
-                document.getElementById('customSubject').classList.remove('hidden');
+        function loadSchedule(user) {
+            for (let day = 1; day <= 5; day++) {
+                const saved = localStorage.getItem(`${user}_day${day}`);
+                if (saved) {
+                    document.getElementById(`day${day}`).value = saved;
+                }
             }
-        }
-
-        function addItem() {
-            const item = document.getElementById('itemInput').value;
-            if (item) {
-                items.push(item);
-                updateItemList();
-                document.getElementById('itemInput').value = '';
-                document.getElementById('customSubject').classList.add('hidden');
-            }
-        }
-
-        function removeSelectedItems() {
-            const checkboxes = document.querySelectorAll('#itemList input[type="checkbox"]:checked');
-            checkboxes.forEach(cb => {
-                const item = cb.parentElement.textContent;
-                const index = items.indexOf(item);
-                if (index > -1) items.splice(index, 1);
-            });
-            updateItemList();
-        }
-
-        function updateItemList() {
-            const list = document.getElementById('itemList');
-            list.innerHTML = '';
-            items.forEach(i => {
-                const li = document.createElement('li');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.style.marginLeft = '10px';
-                li.textContent = i;
-                li.appendChild(checkbox);
-                list.appendChild(li);
-            });
         }
 
         function logout() {
