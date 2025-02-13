@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ניהול תיק לבית ספר</title>
     <style>
-        body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; }
-        #app { max-width: 400px; margin: auto; }
-        input, button, select { margin: 5px; padding: 10px; width: 90%; }
+        body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; background-color: #f0f4f7; color: #333; }
+        #app { max-width: 500px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2); background-color: #fff; }
+        input, button, select { margin: 5px; padding: 10px; width: 90%; border: none; border-radius: 8px; box-sizing: border-box; }
+        button { background-color: #007BFF; color: #fff; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
         .hidden { display: none; }
         .item-list { text-align: left; margin-top: 20px; }
         #itemList li { cursor: pointer; }
+        h2, h3 { color: #0056b3; }
     </style>
 </head>
 <body>
@@ -31,21 +34,36 @@
             <div id="schedule">
                 <h3>מערכת שעות:</h3>
                 <div id="days">
-                    <div>ראשון: <input type="text" id="day1" placeholder="הכנס מקצועות"><button onclick="saveDay(1)">שמור</button></div>
-                    <div>שני: <input type="text" id="day2" placeholder="הכנס מקצועות"><button onclick="saveDay(2)">שמור</button></div>
-                    <div>שלישי: <input type="text" id="day3" placeholder="הכנס מקצועות"><button onclick="saveDay(3)">שמור</button></div>
-                    <div>רביעי: <input type="text" id="day4" placeholder="הכנס מקצועות"><button onclick="saveDay(4)">שמור</button></div>
-                    <div>חמישי: <input type="text" id="day5" placeholder="הכנס מקצועות"><button onclick="saveDay(5)">שמור</button></div>
+                    <div>ראשון: <select id="day1"></select><button onclick="saveDay(1)">שמור</button></div>
+                    <div>שני: <select id="day2"></select><button onclick="saveDay(2)">שמור</button></div>
+                    <div>שלישי: <select id="day3"></select><button onclick="saveDay(3)">שמור</button></div>
+                    <div>רביעי: <select id="day4"></select><button onclick="saveDay(4)">שמור</button></div>
+                    <div>חמישי: <select id="day5"></select><button onclick="saveDay(5)">שמור</button></div>
                 </div>
             </div>
-            <button onclick="logout()">התנתק</button>
+            <button onclick="logout()" style="margin-top:20px; background-color:#dc3545;">התנתק</button>
             <div id="savedMessage"></div>
-            <div id="tomorrowItems"></div>
+            <div id="tomorrowItems" style="margin-top:20px; font-weight:bold;"></div>
         </div>
     </div>
 
     <script>
-        // התחברות ורישום
+        // מקצועות אפשריים
+        const subjects = ['עברית', 'מתמטיקה', 'אנגלית', 'היסטוריה', 'מדעים', 'ספורט', 'תורה', 'מוסיקה', 'אחר'];
+
+        // מילוי רשימת מקצועות
+        function populateSubjects() {
+            for (let day = 1; day <= 5; day++) {
+                const select = document.getElementById(`day${day}`);
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    select.appendChild(option);
+                });
+            }
+        }
+
         let currentUser = '';
 
         function login() {
@@ -87,7 +105,8 @@
             for (let day = 1; day <= 5; day++) {
                 const saved = localStorage.getItem(`${user}_day${day}`);
                 if (saved) {
-                    document.getElementById(`day${day}`).value = saved;
+                    const select = document.getElementById(`day${day}`);
+                    select.value = saved;
                 }
             }
         }
@@ -101,12 +120,14 @@
         }
 
         function showTomorrowItems() {
-            const today = new Date().getDay(); // 0-6 (ראשון הוא 0 בישראל ברוב המקרים כשמודפס)
+            const today = new Date().getDay();
             let tomorrow = today + 1;
             if (tomorrow > 5) tomorrow = 1;
             const items = localStorage.getItem(`${currentUser}_day${tomorrow}`) || 'אין מקצועות למחר';
             document.getElementById('tomorrowItems').innerText = `פריטים למחר: ${items}`;
         }
+
+        window.onload = populateSubjects;
     </script>
 </body>
 </html>
