@@ -26,12 +26,14 @@
 
         <!-- מסך בחירת מערכת -->
         <div id="systemScreen" class="hidden">
-            <h2>בחר מערכת</h2>
+            <h2>בחר מערכת שעות</h2>
             <select id="systemSelect">
                 <option value="בית ספר">בית ספר</option>
                 <option value="עבודה">עבודה</option>
                 <option value="טיול">טיול</option>
+                <option value="אחר">אחר</option>
             </select>
+            <input type="text" id="customSystem" placeholder="הכנס מערכת מותאמת אישית" class="hidden">
             <button onclick="startManagement()">המשך</button>
         </div>
 
@@ -66,16 +68,40 @@
         function register() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
-            if (user && pass) {
-                localStorage.setItem(user, pass);
+            const system = document.getElementById('systemSelect').value;
+            let finalSystem = system;
+            if (system === 'אחר') {
+                finalSystem = document.getElementById('customSystem').value;
+            }
+            if (user && pass && finalSystem) {
+                localStorage.setItem(user, JSON.stringify({ password: pass, system: finalSystem }));
                 document.getElementById('loginMessage').innerText = 'נרשמת בהצלחה! כעת תוכל להתחבר';
             } else {
-                document.getElementById('loginMessage').innerText = 'יש להזין שם משתמש וסיסמה';
+                document.getElementById('loginMessage').innerText = 'יש להזין שם משתמש, סיסמה ומערכת שעות';
             }
         }
 
+        document.getElementById('systemSelect').addEventListener('change', function() {
+            if (this.value === 'אחר') {
+                document.getElementById('customSystem').classList.remove('hidden');
+            } else {
+                document.getElementById('customSystem').classList.add('hidden');
+            }
+        });
+
         // בחירת מערכת והתחלת ניהול
         function startManagement() {
+            const system = document.getElementById('systemSelect').value;
+            if (system === 'אחר') {
+                const customSystem = document.getElementById('customSystem').value;
+                if (!customSystem) {
+                    alert('יש להזין מערכת מותאמת אישית');
+                    return;
+                }
+                localStorage.setItem('selectedSystem', customSystem);
+            } else {
+                localStorage.setItem('selectedSystem', system);
+            }
             document.getElementById('systemScreen').classList.add('hidden');
             document.getElementById('bagScreen').classList.remove('hidden');
         }
