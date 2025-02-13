@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Select elements
+    // קבלת כל האלמנטים שצריך לעבוד איתם בדף
     const authScreen = document.getElementById("authScreen");
     const mainContent = document.getElementById("mainContent");
     const loginForm = document.getElementById("loginForm");
@@ -28,22 +28,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const setReminderBtn = document.getElementById("setReminder");
     const reminderDisplay = document.getElementById("reminderDisplay");
 
-    // User Authentication
+    // מערך של משתמשים שנרשמו
     const users = [];
     let currentUser = null;
 
+    // הצגת טופס רישום
     showRegister.addEventListener("click", () => {
         loginForm.classList.add("hidden");
         registerForm.classList.remove("hidden");
     });
 
+    // הצגת טופס התחברות
     showLogin.addEventListener("click", () => {
         registerForm.classList.add("hidden");
         loginForm.classList.remove("hidden");
     });
 
+    // התחברות למערכת
     loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+        event.preventDefault(); // מונע את פעולת ברירת המחדל (שליחת טופס)
         const username = loginUsername.value;
         const password = loginPassword.value;
 
@@ -53,57 +56,65 @@ document.addEventListener("DOMContentLoaded", () => {
             authScreen.style.display = "none";
             mainContent.style.display = "block";
         } else {
-            alert("Invalid login credentials");
+            alert("פרטי התחברות שגויים");
         }
     });
 
+    // רישום משתמש חדש
     registerForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const username = registerUsername.value;
         const password = registerPassword.value;
 
+        // בודק אם כבר יש משתמש עם שם המשתמש הזה
         if (users.some(user => user.username === username)) {
-            alert("Username already exists");
+            alert("השם כבר קיים");
         } else {
             users.push({ username, password });
-            alert("Registration successful!");
+            alert("הרישום הצליח!");
             showLogin.click();
         }
     });
 
-    // Weather Information
+    // קבלת מידע על מזג האוויר
     getWeatherBtn.addEventListener("click", async () => {
         const city = citySelect.value;
         const country = countrySelect.value;
 
         if (city && country) {
-            const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=bfba7f78869e4222b89154845251302&q=${city},${country}`);
-            const weather = await response.json();
-
-            weatherInfo.textContent = `Weather in ${city}: ${weather.current.temp_c}°C, ${weather.current.condition.text}`;
-            suggestOutfit(weather);
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=bfba7f78869e4222b89154845251302&q=${city},${country}`);
+                const weather = await response.json();
+                weatherInfo.textContent = `מזג האוויר ב-${city}: ${weather.current.temp_c}°C, ${weather.current.condition.text}`;
+                suggestOutfit(weather);
+            } catch (error) {
+                alert("שגיאה בטעינת מזג האוויר");
+            }
+        } else {
+            alert("בחר עיר ומדינה");
         }
     });
 
-    // Outfit Suggestion based on Weather
+    // הצעת לבוש על פי מזג האוויר
     function suggestOutfit(weather) {
         let suggestion = "";
         if (weather.current.temp_c < 10) {
-            suggestion = "It's cold! You should take a coat and scarf.";
+            suggestion = "קר מאוד! כדאי לקחת מעיל וצעיף.";
         } else if (weather.current.temp_c < 20) {
-            suggestion = "It's chilly! A jacket would be good.";
+            suggestion = "קצת קריר! מעיל קל יהיה טוב.";
         } else {
-            suggestion = "It's warm! Wear something light.";
+            suggestion = "חמים! תלבש משהו קל.";
         }
 
+        // אם יש גשם, מוסיף הצעה לקחת מטרייה
         if (weather.current.condition.text.toLowerCase().includes("rain")) {
-            suggestion += " Don't forget your umbrella!";
+            suggestion += " אל תשכח מטרייה!";
         }
 
         outfitSuggestion.textContent = suggestion;
     }
 
-    // Schedule saving
+    // שמירת לוח זמנים לשבוע
     saveScheduleBtn.addEventListener("click", () => {
         const schedule = {
             sunday: sundaySubjectsInput.value.trim(),
@@ -116,17 +127,17 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         localStorage.setItem("weeklySchedule", JSON.stringify(schedule));
-        alert("Schedule saved!");
+        alert("לוח הזמנים נשמר!");
     });
 
-    // Reminder feature
+    // הגדרת תזכורת ליום הבא
     setReminderBtn.addEventListener("click", () => {
         const reminder = tomorrowReminder.value.trim();
         localStorage.setItem("tomorrowReminder", reminder);
-        reminderDisplay.textContent = `Reminder: ${reminder}`;
+        reminderDisplay.textContent = `תזכורת: ${reminder}`;
     });
 
-    // Load schedule from localStorage
+    // טעינת לוח הזמנים שנשמר ב-localStorage
     const savedSchedule = JSON.parse(localStorage.getItem("weeklySchedule"));
     if (savedSchedule) {
         sundaySubjectsInput.value = savedSchedule.sunday;
@@ -138,12 +149,13 @@ document.addEventListener("DOMContentLoaded", () => {
         saturdaySubjectsInput.value = savedSchedule.saturday;
     }
 
+    // הצגת תזכורת מה-localStorage
     const savedReminder = localStorage.getItem("tomorrowReminder");
     if (savedReminder) {
-        reminderDisplay.textContent = `Reminder: ${savedReminder}`;
+        reminderDisplay.textContent = `תזכורת: ${savedReminder}`;
     }
 
-    // Theme toggle
+    // שינוי בין מצב בהיר לכהה
     themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
     });
