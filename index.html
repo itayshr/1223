@@ -57,6 +57,7 @@
             <input type="checkbox" id="subject4"> תרבות ישראל
         </div>
         <button onclick="saveSchedule()">שמור מערכת שעות</button>
+        <button onclick="goToNextDay()" style="display:none;" id="next-day-button">המשך</button>
     </div>
 
     <script>
@@ -110,6 +111,13 @@
 
             usersSchedule[username].schedule["ראשון"] = subjects;
             alert("✅ מערכת השעות נשמרה בהצלחה!");
+            document.getElementById("next-day-button").style.display = 'inline-block';
+        }
+
+        // פונקציה לעבור ליום הבא
+        function goToNextDay() {
+            alert("מוכן להמשיך ליום הבא!");
+            // כאן תוכל להוסיף קוד ליום נוסף (שני, שלישי וכו')
         }
     </script>
 
