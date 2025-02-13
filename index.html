@@ -7,7 +7,7 @@
     <style>
         body { font-family: 'Arial', sans-serif; text-align: center; margin: 20px; }
         #app { max-width: 400px; margin: auto; }
-        input, button { margin: 5px; padding: 10px; width: 90%; }
+        input, button, select { margin: 5px; padding: 10px; width: 90%; }
         .hidden { display: none; }
         .item-list { text-align: left; margin-top: 20px; }
     </style>
@@ -27,8 +27,20 @@
         <!-- מסך ניהול תיק -->
         <div id="bagScreen" class="hidden">
             <h2>ניהול תיק לבית הספר</h2>
-            <input type="text" id="itemInput" placeholder="הכנס פריט">
-            <button onclick="addItem()">הוסף פריט</button>
+            <label for="subjectSelect">בחר מקצוע להוספת ציוד:</label>
+            <select id="subjectSelect" onchange="addSubject()">
+                <option value="">--בחר מקצוע--</option>
+                <option value="עברית">עברית</option>
+                <option value="מתמטיקה">מתמטיקה</option>
+                <option value="אנגלית">אנגלית</option>
+                <option value="היסטוריה">היסטוריה</option>
+                <option value="מדעים">מדעים</option>
+                <option value="אחר">אחר</option>
+            </select>
+            <div id="customSubject" class="hidden">
+                <input type="text" id="itemInput" placeholder="הכנס פריט">
+                <button onclick="addItem()">הוסף פריט</button>
+            </div>
             <button onclick="removeItem()">הוצא פריט</button>
             <div class="item-list">
                 <h3>רשימת פריטים:</h3>
@@ -66,12 +78,24 @@
         // ניהול פריטים בתיק
         const items = [];
 
+        function addSubject() {
+            const subject = document.getElementById('subjectSelect').value;
+            if (subject && subject !== 'אחר') {
+                items.push(subject);
+                updateItemList();
+                document.getElementById('subjectSelect').value = '';
+            } else if (subject === 'אחר') {
+                document.getElementById('customSubject').classList.remove('hidden');
+            }
+        }
+
         function addItem() {
             const item = document.getElementById('itemInput').value;
             if (item) {
                 items.push(item);
                 updateItemList();
                 document.getElementById('itemInput').value = '';
+                document.getElementById('customSubject').classList.add('hidden');
             }
         }
 
