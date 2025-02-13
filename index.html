@@ -34,11 +34,11 @@
             <div id="schedule">
                 <h3>מערכת שעות:</h3>
                 <div id="days">
-                    <div>ראשון: <select id="day1"></select><button onclick="saveDay(1)">שמור</button></div>
-                    <div>שני: <select id="day2"></select><button onclick="saveDay(2)">שמור</button></div>
-                    <div>שלישי: <select id="day3"></select><button onclick="saveDay(3)">שמור</button></div>
-                    <div>רביעי: <select id="day4"></select><button onclick="saveDay(4)">שמור</button></div>
-                    <div>חמישי: <select id="day5"></select><button onclick="saveDay(5)">שמור</button></div>
+                    <div>ראשון: <select id="day1" multiple></select><button onclick="saveDay(1)">שמור</button></div>
+                    <div>שני: <select id="day2" multiple></select><button onclick="saveDay(2)">שמור</button></div>
+                    <div>שלישי: <select id="day3" multiple></select><button onclick="saveDay(3)">שמור</button></div>
+                    <div>רביעי: <select id="day4" multiple></select><button onclick="saveDay(4)">שמור</button></div>
+                    <div>חמישי: <select id="day5" multiple></select><button onclick="saveDay(5)">שמור</button></div>
                 </div>
             </div>
             <button onclick="logout()" style="margin-top:20px; background-color:#dc3545;">התנתק</button>
@@ -94,10 +94,10 @@
 
         function saveDay(day) {
             const user = currentUser;
-            const subjects = document.getElementById(`day${day}`).value;
-            localStorage.setItem(`${user}_day${day}`, subjects);
-            document.getElementById('savedMessage').innerText = `יום ${day} נשמר!`;
-            setTimeout(() => { document.getElementById('savedMessage').innerText = ''; }, 2000);
+            const selectedOptions = Array.from(document.getElementById(`day${day}`).selectedOptions).map(o => o.value);
+            localStorage.setItem(`${user}_day${day}`, selectedOptions.join(', '));
+            document.getElementById('savedMessage').innerText = `יום ${day} נשמר עם המקצועות: ${selectedOptions.join(', ')}`;
+            setTimeout(() => { document.getElementById('savedMessage').innerText = ''; }, 3000);
             showTomorrowItems();
         }
 
@@ -106,7 +106,10 @@
                 const saved = localStorage.getItem(`${user}_day${day}`);
                 if (saved) {
                     const select = document.getElementById(`day${day}`);
-                    select.value = saved;
+                    const subjectsArray = saved.split(', ');
+                    Array.from(select.options).forEach(option => {
+                        option.selected = subjectsArray.includes(option.value);
+                    });
                 }
             }
         }
