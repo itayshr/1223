@@ -9,117 +9,174 @@
             font-family: Arial, sans-serif;
             direction: rtl;
             padding: 20px;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
         button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 16px;
+            margin: 10px;
+            padding: 12px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
         }
         .subject-selection {
-            margin: 10px 0;
+            margin: 20px 0;
+            text-align: right;
+        }
+        .subject-selection input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
 
-    <h1>מערכת שעות</h1>
+<div class="container">
+    <h1>📅 מערכת שעות</h1>
 
+    <!-- בחירת רישום או התחברות -->
     <div id="login-or-register">
-        <p>האם אתה רוצה להירשם (כן) או להתחבר (לא)?</p>
-        <button onclick="registerOrLogin(true)">כן - להירשם</button>
-        <button onclick="registerOrLogin(false)">לא - להתחבר</button>
+        <p>האם אתה רוצה להירשם או להתחבר?</p>
+        <button onclick="registerOrLogin(true)">🆕 להירשם</button>
+        <button onclick="registerOrLogin(false)">🔑 להתחבר</button>
     </div>
 
-    <div id="register-form" style="display:none;">
-        <label for="username">שם משתמש:</label>
-        <input type="text" id="username" placeholder="הזן שם משתמש חדש"><br><br>
-        <label for="password">סיסמה:</label>
-        <input type="password" id="password" placeholder="הזן סיסמה"><br><br>
-        <button onclick="createNewUser()">הרשם</button>
+    <!-- טופס הרשמה -->
+    <div id="register-form" class="hidden">
+        <h2>🆕 הרשמה</h2>
+        <input type="text" id="username" placeholder="הזן שם משתמש חדש"><br>
+        <input type="password" id="password" placeholder="הזן סיסמה"><br>
+        <button onclick="createNewUser()">✅ הרשמה</button>
     </div>
 
-    <div id="login-form" style="display:none;">
-        <label for="login-username">שם משתמש:</label>
-        <input type="text" id="login-username" placeholder="הזן את שם המשתמש שלך"><br><br>
-        <label for="login-password">סיסמה:</label>
-        <input type="password" id="login-password" placeholder="הזן את הסיסמה שלך"><br><br>
-        <button onclick="loginUser()">התחבר</button>
+    <!-- טופס התחברות -->
+    <div id="login-form" class="hidden">
+        <h2>🔑 התחברות</h2>
+        <input type="text" id="login-username" placeholder="הזן את שם המשתמש"><br>
+        <input type="password" id="login-password" placeholder="הזן את הסיסמה"><br>
+        <button onclick="loginUser()">🔓 התחבר</button>
     </div>
 
-    <div id="schedule-form" style="display:none;">
-        <h2>בחר את המקצועות ליום ראשון</h2>
+    <!-- מערכת שעות ליום ראשון -->
+    <div id="schedule-form" class="hidden">
+        <h2>📖 מערכת שעות ליום ראשון</h2>
         <div class="subject-selection">
-            <p>ראשון:</p>
-            <input type="checkbox" id="subject1"> ערבית
-            <input type="checkbox" id="subject2"> מדעים
-            <input type="checkbox" id="subject3"> מתמטיקה
-            <input type="checkbox" id="subject4"> תרבות ישראל
+            <label><input type="checkbox" id="subject1"> ערבית</label><br>
+            <label><input type="checkbox" id="subject2"> מדעים</label><br>
+            <label><input type="checkbox" id="subject3"> מתמטיקה</label><br>
+            <label><input type="checkbox" id="subject4"> תרבות ישראל</label><br>
+            <label><input type="checkbox" id="subject5"> עברית</label><br>
+            <label><input type="checkbox" id="subject6"> אנגלית</label><br>
+            <label><input type="checkbox" id="subject7"> ספורט</label><br>
+            <label><input type="checkbox" id="subject8"> חינוך</label><br>
+            <label><input type="checkbox" id="subject9"> ניהול פיננסי</label><br>
+            <label><input type="checkbox" id="subject10"> בישול ואפייה</label><br>
+            <label><input type="checkbox" id="subject11"> ממרם</label><br>
         </div>
-        <button onclick="saveSchedule()">שמור מערכת שעות</button>
-        <button onclick="goToNextDay()" style="display:none;" id="next-day-button">המשך</button>
+        <button onclick="saveSchedule()">💾 שמור מערכת שעות</button>
+        <button onclick="goToNextDay()" class="hidden" id="next-day-button">➡ המשך</button>
     </div>
+</div>
 
-    <script>
-        const usersSchedule = {};
+<script>
+    const usersSchedule = {};
 
-        // פעולה לבחור רישום או התחברות
-        function registerOrLogin(isRegister) {
-            document.getElementById("login-or-register").style.display = 'none';
-            if (isRegister) {
-                document.getElementById("register-form").style.display = 'block';
-            } else {
-                document.getElementById("login-form").style.display = 'block';
+    // בחירת רישום או התחברות
+    function registerOrLogin(isRegister) {
+        document.getElementById("login-or-register").classList.add("hidden");
+        if (isRegister) {
+            document.getElementById("register-form").classList.remove("hidden");
+        } else {
+            document.getElementById("login-form").classList.remove("hidden");
+        }
+    }
+
+    // הרשמה של משתמש חדש
+    function createNewUser() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        if (!username || !password) {
+            alert("⚠ אנא מלא את כל השדות.");
+            return;
+        }
+        if (usersSchedule[username]) {
+            alert("⚠ שם המשתמש כבר קיים.");
+        } else {
+            usersSchedule[username] = { password: password, schedule: {} };
+            alert(`✅ נרשמת בהצלחה, ${username}!`);
+            document.getElementById("register-form").classList.add("hidden");
+            document.getElementById("schedule-form").classList.remove("hidden");
+        }
+    }
+
+    // התחברות של משתמש קיים
+    function loginUser() {
+        const username = document.getElementById("login-username").value.trim();
+        const password = document.getElementById("login-password").value;
+        if (usersSchedule[username] && usersSchedule[username].password === password) {
+            alert(`🔓 שלום ${username}, ברוך הבא למערכת!`);
+            document.getElementById("login-form").classList.add("hidden");
+            document.getElementById("schedule-form").classList.remove("hidden");
+        } else {
+            alert("⚠ שם המשתמש או הסיסמה שגויים.");
+        }
+    }
+
+    // שמירת מערכת שעות
+    function saveSchedule() {
+        const username = document.getElementById("username").value;
+        if (!username || !usersSchedule[username]) {
+            alert("⚠ לא זוהה משתמש. נסה להירשם מחדש.");
+            return;
+        }
+        const subjects = [];
+        for (let i = 1; i <= 11; i++) {
+            const checkbox = document.getElementById(`subject${i}`);
+            if (checkbox && checkbox.checked) {
+                subjects.push(checkbox.nextSibling.nodeValue.trim());
             }
         }
+        usersSchedule[username].schedule["ראשון"] = subjects;
+        alert("✅ מערכת השעות ליום ראשון נשמרה בהצלחה!");
+        document.getElementById("next-day-button").classList.remove("hidden");
+    }
 
-        // פונקציה להרשמה של משתמש חדש
-        function createNewUser() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            if (usersSchedule[username]) {
-                alert("⚠ שם המשתמש כבר קיים.");
-            } else {
-                usersSchedule[username] = { password: password, schedule: {} };
-                alert(`✅ נרשמת בהצלחה, ${username}!`);
-                document.getElementById("register-form").style.display = 'none';
-                document.getElementById("schedule-form").style.display = 'block';
-            }
-        }
-
-        // פונקציה להתחברות עם משתמש קיים
-        function loginUser() {
-            const username = document.getElementById("login-username").value;
-            const password = document.getElementById("login-password").value;
-            if (usersSchedule[username] && usersSchedule[username].password === password) {
-                alert(`שלום ${username}, ברוך הבא למערכת!`);
-                document.getElementById("login-form").style.display = 'none';
-                document.getElementById("schedule-form").style.display = 'block';
-            } else {
-                alert("⚠ שם המשתמש או הסיסמה אינם נכונים.");
-            }
-        }
-
-        // פונקציה לשמירת מערכת שעות
-        function saveSchedule() {
-            const username = document.getElementById("username").value;
-            const subjects = [];
-            if (document.getElementById("subject1").checked) subjects.push("ערבית");
-            if (document.getElementById("subject2").checked) subjects.push("מדעים");
-            if (document.getElementById("subject3").checked) subjects.push("מתמטיקה");
-            if (document.getElementById("subject4").checked) subjects.push("תרבות ישראל");
-
-            usersSchedule[username].schedule["ראשון"] = subjects;
-            alert("✅ מערכת השעות נשמרה בהצלחה!");
-            document.getElementById("next-day-button").style.display = 'inline-block';
-        }
-
-        // פונקציה לעבור ליום הבא
-        function goToNextDay() {
-            alert("מוכן להמשיך ליום הבא!");
-            // כאן תוכל להוסיף קוד ליום נוסף (שני, שלישי וכו')
-        }
-    </script>
+    // מעבר ליום הבא
+    function goToNextDay() {
+        alert("➡ ממשיכים ליום הבא!");
+    }
+</script>
 
 </body>
 </html>
