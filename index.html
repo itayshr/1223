@@ -6,11 +6,11 @@
     <title>מערכת שעות</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             direction: rtl;
             padding: 20px;
             text-align: center;
-            background-color: #f0f0f0;
+            background-color: #e6f7ff;
         }
         button {
             margin: 10px;
@@ -28,6 +28,8 @@
         }
         .subject-selection {
             margin: 15px 0;
+            text-align: right;
+            display: inline-block;
             text-align: right;
         }
         input {
@@ -63,12 +65,19 @@
     </div>
 
     <div id="schedule-form" style="display:none;">
-        <h2>📅 בחר מקצועות ליום ראשון</h2>
+        <h2 id="day-title">📅 בחר מקצועות ליום ראשון</h2>
         <div class="subject-selection">
             <label><input type="checkbox" id="subject1"> ערבית</label><br>
             <label><input type="checkbox" id="subject2"> מדעים</label><br>
             <label><input type="checkbox" id="subject3"> מתמטיקה</label><br>
             <label><input type="checkbox" id="subject4"> תרבות ישראל</label><br>
+            <label><input type="checkbox" id="subject5"> בישול ואפייה</label><br>
+            <label><input type="checkbox" id="subject6"> חינוך</label><br>
+            <label><input type="checkbox" id="subject7"> ספורט</label><br>
+            <label><input type="checkbox" id="subject8"> עברית</label><br>
+            <label><input type="checkbox" id="subject9"> ניהול פיננסי</label><br>
+            <label><input type="checkbox" id="subject10"> אנגלית</label><br>
+            <label><input type="checkbox" id="subject11"> ממרם</label><br>
         </div>
         <button onclick="saveSchedule()">💾 שמור</button>
         <button onclick="goToNextDay()" style="display:none;" id="next-day-button">➡️ המשך</button>
@@ -76,6 +85,9 @@
 
     <script>
         const usersSchedule = {};
+        const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
+        let currentDayIndex = 0;
+        let currentUser = "";
 
         function registerOrLogin(isRegister) {
             document.getElementById("login-or-register").style.display = 'none';
@@ -92,10 +104,12 @@
             if (usersSchedule[username]) {
                 alert("⚠️ שם המשתמש כבר קיים!");
             } else {
+                currentUser = username;
                 usersSchedule[username] = { password: password, schedule: {} };
                 alert(`🎉 נרשמת בהצלחה, ${username}!`);
                 document.getElementById("register-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
+                updateDayTitle();
             }
         }
 
@@ -103,17 +117,50 @@
             const username = document.getElementById("login-username").value;
             const password = document.getElementById("login-password").value;
             if (usersSchedule[username] && usersSchedule[username].password === password) {
+                currentUser = username;
                 alert(`👋 שלום ${username}, ברוך הבא!`);
                 document.getElementById("login-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
+                updateDayTitle();
             } else {
                 alert("❌ שם המשתמש או הסיסמה שגויים.");
             }
         }
 
+        function updateDayTitle() {
+            document.getElementById("day-title").innerText = `📅 בחר מקצועות ליום ${days[currentDayIndex]}`;
+        }
+
         function saveSchedule() {
             const subjects = [];
-            if (document.getElementById("subject1").checked) subjects.push("ערבית");
-            if (document.getElementById("subject2").checked) subjects.push("מדעים");
-            if (document.getElementById("subject3").checked) subjects.push("מתמטיקה");
-            if (document.getElement
+            for (let i = 1; i <= 11; i++) {
+                if (document.getElementById(`subject${i}`).checked) {
+                    subjects.push(document.getElementById(`subject${i}`).nextSibling.nodeValue.trim());
+                }
+            }
+            usersSchedule[currentUser].schedule[days[currentDayIndex]] = subjects;
+            alert(`💾 מערכת השעות ליום ${days[currentDayIndex]} נשמרה בהצלחה!`);
+            document.getElementById("next-day-button").style.display = 'inline-block';
+        }
+
+        function goToNextDay() {
+            currentDayIndex++;
+            if (currentDayIndex < days.length) {
+                clearCheckboxes();
+                updateDayTitle();
+                document.getElementById("next-day-button").style.display = 'none';
+            } else {
+                alert(`🎉 מערכת השעות הושלמה בהצלחה!`);
+                document.getElementById("schedule-form").style.display = 'none';
+            }
+        }
+
+        function clearCheckboxes() {
+            for (let i = 1; i <= 11; i++) {
+                document.getElementById(`subject${i}`).checked = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
