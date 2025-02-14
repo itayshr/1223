@@ -1,182 +1,162 @@
-<!DOCTYPE html>
-<html lang="he">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת שעות</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            padding: 20px;
-            background-color: #f0f0f0;
-            text-align: center;
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 30px;
-        }
-        button {
-            margin: 10px;
-            padding: 12px 20px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: #fff;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        input[type="text"], input[type="password"] {
-            padding: 10px;
-            margin: 10px 0;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-        }
-        .subject-selection {
-            margin: 20px 0;
-            text-align: right;
-        }
-        .subject-selection input {
-            margin-right: 10px;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-</head>
-<body>
+document.addEventListener("DOMContentLoaded", () => {
+    // קבלת כל האלמנטים שצריך לעבוד איתם בדף
+    const authScreen = document.getElementById("authScreen");
+    const mainContent = document.getElementById("mainContent");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const showRegister = document.getElementById("showRegister");
+    const showLogin = document.getElementById("showLogin");
+    const loginUsername = document.getElementById("loginUsername");
+    const loginPassword = document.getElementById("loginPassword");
+    const registerUsername = document.getElementById("registerUsername");
+    const registerPassword = document.getElementById("registerPassword");
+    const themeToggle = document.getElementById("themeToggle");
+    const countrySelect = document.getElementById("country");
+    const citySelect = document.getElementById("city");
+    const getWeatherBtn = document.getElementById("getWeather");
+    const weatherInfo = document.getElementById("weatherInfo");
+    const outfitSuggestion = document.getElementById("outfitSuggestion");
+    const sundaySubjectsInput = document.getElementById("sundaySubjects");
+    const mondaySubjectsInput = document.getElementById("mondaySubjects");
+    const tuesdaySubjectsInput = document.getElementById("tuesdaySubjects");
+    const wednesdaySubjectsInput = document.getElementById("wednesdaySubjects");
+    const thursdaySubjectsInput = document.getElementById("thursdaySubjects");
+    const fridaySubjectsInput = document.getElementById("fridaySubjects");
+    const saturdaySubjectsInput = document.getElementById("saturdaySubjects");
+    const saveScheduleBtn = document.getElementById("saveSchedule");
+    const tomorrowReminder = document.getElementById("tomorrowReminder");
+    const setReminderBtn = document.getElementById("setReminder");
+    const reminderDisplay = document.getElementById("reminderDisplay");
 
-<div class="container">
-    <h1>📅 מערכת שעות</h1>
+    // מערך של משתמשים שנרשמו
+    const users = [];
+    let currentUser = null;
 
-    <!-- בחירת רישום או התחברות -->
-    <div id="login-or-register">
-        <p>האם אתה רוצה להירשם או להתחבר?</p>
-        <button onclick="registerOrLogin(true)">🆕 להירשם</button>
-        <button onclick="registerOrLogin(false)">🔑 להתחבר</button>
-    </div>
+    // הצגת טופס רישום
+    showRegister.addEventListener("click", () => {
+        loginForm.classList.add("hidden");
+        registerForm.classList.remove("hidden");
+    });
 
-    <!-- טופס הרשמה -->
-    <div id="register-form" class="hidden">
-        <h2>🆕 הרשמה</h2>
-        <input type="text" id="username" placeholder="הזן שם משתמש חדש"><br>
-        <input type="password" id="password" placeholder="הזן סיסמה"><br>
-        <button onclick="createNewUser()">✅ הרשמה</button>
-    </div>
+    // הצגת טופס התחברות
+    showLogin.addEventListener("click", () => {
+        registerForm.classList.add("hidden");
+        loginForm.classList.remove("hidden");
+    });
 
-    <!-- טופס התחברות -->
-    <div id="login-form" class="hidden">
-        <h2>🔑 התחברות</h2>
-        <input type="text" id="login-username" placeholder="הזן את שם המשתמש"><br>
-        <input type="password" id="login-password" placeholder="הזן את הסיסמה"><br>
-        <button onclick="loginUser()">🔓 התחבר</button>
-    </div>
+    // התחברות למערכת
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // מונע את פעולת ברירת המחדל (שליחת טופס)
+        const username = loginUsername.value;
+        const password = loginPassword.value;
 
-    <!-- מערכת שעות ליום ראשון -->
-    <div id="schedule-form" class="hidden">
-        <h2>📖 מערכת שעות ליום ראשון</h2>
-        <div class="subject-selection">
-            <label><input type="checkbox" id="subject1"> ערבית</label><br>
-            <label><input type="checkbox" id="subject2"> מדעים</label><br>
-            <label><input type="checkbox" id="subject3"> מתמטיקה</label><br>
-            <label><input type="checkbox" id="subject4"> תרבות ישראל</label><br>
-            <label><input type="checkbox" id="subject5"> עברית</label><br>
-            <label><input type="checkbox" id="subject6"> אנגלית</label><br>
-            <label><input type="checkbox" id="subject7"> ספורט</label><br>
-            <label><input type="checkbox" id="subject8"> חינוך</label><br>
-            <label><input type="checkbox" id="subject9"> ניהול פיננסי</label><br>
-            <label><input type="checkbox" id="subject10"> בישול ואפייה</label><br>
-            <label><input type="checkbox" id="subject11"> ממרם</label><br>
-        </div>
-        <button onclick="saveSchedule()">💾 שמור מערכת שעות</button>
-        <button onclick="goToNextDay()" class="hidden" id="next-day-button">➡ המשך</button>
-    </div>
-</div>
+        currentUser = users.find(user => user.username === username && user.password === password);
 
-<script>
-    const usersSchedule = {};
-
-    // בחירת רישום או התחברות
-    function registerOrLogin(isRegister) {
-        document.getElementById("login-or-register").classList.add("hidden");
-        if (isRegister) {
-            document.getElementById("register-form").classList.remove("hidden");
+        if (currentUser) {
+            authScreen.style.display = "none";
+            mainContent.style.display = "block";
         } else {
-            document.getElementById("login-form").classList.remove("hidden");
+            alert("פרטי התחברות שגויים");
         }
-    }
+    });
 
-    // הרשמה של משתמש חדש
-    function createNewUser() {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
-        if (!username || !password) {
-            alert("⚠ אנא מלא את כל השדות.");
-            return;
-        }
-        if (usersSchedule[username]) {
-            alert("⚠ שם המשתמש כבר קיים.");
+    // רישום משתמש חדש
+    registerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const username = registerUsername.value;
+        const password = registerPassword.value;
+
+        // בודק אם כבר יש משתמש עם שם המשתמש הזה
+        if (users.some(user => user.username === username)) {
+            alert("השם כבר קיים");
         } else {
-            usersSchedule[username] = { password: password, schedule: {} };
-            alert(`✅ נרשמת בהצלחה, ${username}!`);
-            document.getElementById("register-form").classList.add("hidden");
-            document.getElementById("schedule-form").classList.remove("hidden");
+            users.push({ username, password });
+            alert("הרישום הצליח!");
+            showLogin.click();
         }
-    }
+    });
 
-    // התחברות של משתמש קיים
-    function loginUser() {
-        const username = document.getElementById("login-username").value.trim();
-        const password = document.getElementById("login-password").value;
-        if (usersSchedule[username] && usersSchedule[username].password === password) {
-            alert(`🔓 שלום ${username}, ברוך הבא למערכת!`);
-            document.getElementById("login-form").classList.add("hidden");
-            document.getElementById("schedule-form").classList.remove("hidden");
-        } else {
-            alert("⚠ שם המשתמש או הסיסמה שגויים.");
-        }
-    }
+    // קבלת מידע על מזג האוויר
+    getWeatherBtn.addEventListener("click", async () => {
+        const city = citySelect.value;
+        const country = countrySelect.value;
 
-    // שמירת מערכת שעות
-    function saveSchedule() {
-        const username = document.getElementById("username").value;
-        if (!username || !usersSchedule[username]) {
-            alert("⚠ לא זוהה משתמש. נסה להירשם מחדש.");
-            return;
-        }
-        const subjects = [];
-        for (let i = 1; i <= 11; i++) {
-            const checkbox = document.getElementById(`subject${i}`);
-            if (checkbox && checkbox.checked) {
-                subjects.push(checkbox.nextSibling.nodeValue.trim());
+        if (city && country) {
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=bfba7f78869e4222b89154845251302&q=${city},${country}`);
+                const weather = await response.json();
+                weatherInfo.textContent = `מזג האוויר ב-${city}: ${weather.current.temp_c}°C, ${weather.current.condition.text}`;
+                suggestOutfit(weather);
+            } catch (error) {
+                alert("שגיאה בטעינת מזג האוויר");
             }
+        } else {
+            alert("בחר עיר ומדינה");
         }
-        usersSchedule[username].schedule["ראשון"] = subjects;
-        alert("✅ מערכת השעות ליום ראשון נשמרה בהצלחה!");
-        document.getElementById("next-day-button").classList.remove("hidden");
+    });
+
+    // הצעת לבוש על פי מזג האוויר
+    function suggestOutfit(weather) {
+        let suggestion = "";
+        if (weather.current.temp_c < 10) {
+            suggestion = "קר מאוד! כדאי לקחת מעיל וצעיף.";
+        } else if (weather.current.temp_c < 20) {
+            suggestion = "קצת קריר! מעיל קל יהיה טוב.";
+        } else {
+            suggestion = "חמים! תלבש משהו קל.";
+        }
+
+        // אם יש גשם, מוסיף הצעה לקחת מטרייה
+        if (weather.current.condition.text.toLowerCase().includes("rain")) {
+            suggestion += " אל תשכח מטרייה!";
+        }
+
+        outfitSuggestion.textContent = suggestion;
     }
 
-    // מעבר ליום הבא
-    function goToNextDay() {
-        alert("➡ ממשיכים ליום הבא!");
-    }
-</script>
+    // שמירת לוח זמנים לשבוע
+    saveScheduleBtn.addEventListener("click", () => {
+        const schedule = {
+            sunday: sundaySubjectsInput.value.trim(),
+            monday: mondaySubjectsInput.value.trim(),
+            tuesday: tuesdaySubjectsInput.value.trim(),
+            wednesday: wednesdaySubjectsInput.value.trim(),
+            thursday: thursdaySubjectsInput.value.trim(),
+            friday: fridaySubjectsInput.value.trim(),
+            saturday: saturdaySubjectsInput.value.trim(),
+        };
 
-</body>
-</html>
+        localStorage.setItem("weeklySchedule", JSON.stringify(schedule));
+        alert("לוח הזמנים נשמר!");
+    });
+
+    // הגדרת תזכורת ליום הבא
+    setReminderBtn.addEventListener("click", () => {
+        const reminder = tomorrowReminder.value.trim();
+        localStorage.setItem("tomorrowReminder", reminder);
+        reminderDisplay.textContent = `תזכורת: ${reminder}`;
+    });
+
+    // טעינת לוח הזמנים שנשמר ב-localStorage
+    const savedSchedule = JSON.parse(localStorage.getItem("weeklySchedule"));
+    if (savedSchedule) {
+        sundaySubjectsInput.value = savedSchedule.sunday;
+        mondaySubjectsInput.value = savedSchedule.monday;
+        tuesdaySubjectsInput.value = savedSchedule.tuesday;
+        wednesdaySubjectsInput.value = savedSchedule.wednesday;
+        thursdaySubjectsInput.value = savedSchedule.thursday;
+        fridaySubjectsInput.value = savedSchedule.friday;
+        saturdaySubjectsInput.value = savedSchedule.saturday;
+    }
+
+    // הצגת תזכורת מה-localStorage
+    const savedReminder = localStorage.getItem("tomorrowReminder");
+    if (savedReminder) {
+        reminderDisplay.textContent = `תזכורת: ${savedReminder}`;
+    }
+
+    // שינוי בין מצב בהיר לכהה
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+    });
+});
