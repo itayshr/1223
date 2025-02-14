@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת שעות</title>
+    <title>מערכת שעות עם שמירה</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -34,6 +34,8 @@
         }
         input {
             margin: 5px;
+            padding: 5px;
+            font-size: 16px;
         }
         h1, h2 {
             color: #333;
@@ -84,28 +86,39 @@
     </div>
 
     <script>
-        const usersSchedule = {};
         const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
         let currentDayIndex = 0;
         let currentUser = "";
 
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users')) || {};
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
         function registerOrLogin(isRegister) {
             document.getElementById("login-or-register").style.display = 'none';
-            if (isRegister) {
-                document.getElementById("register-form").style.display = 'block';
-            } else {
-                document.getElementById("login-form").style.display = 'block';
-            }
+            document.getElementById(isRegister ? "register-form" : "login-form").style.display = 'block';
         }
 
         function createNewUser() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            if (usersSchedule[username]) {
+            const users = getUsers();
+
+            if (!username || !password) {
+                alert("❌ יש למלא שם משתמש וסיסמה.");
+                return;
+            }
+
+            if (users[username]) {
                 alert("⚠️ שם המשתמש כבר קיים!");
             } else {
+                users[username] = { password, schedule: {} };
+                saveUsers(users);
                 currentUser = username;
-                usersSchedule[username] = { password: password, schedule: {} };
                 alert(`🎉 נרשמת בהצלחה, ${username}!`);
                 document.getElementById("register-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
@@ -116,7 +129,9 @@
         function loginUser() {
             const username = document.getElementById("login-username").value;
             const password = document.getElementById("login-password").value;
-            if (usersSchedule[username] && usersSchedule[username].password === password) {
+            const users = getUsers();
+
+            if (users[username] && users[username].password === password) {
                 currentUser = username;
                 alert(`👋 שלום ${username}, ברוך הבא!`);
                 document.getElementById("login-form").style.display = 'none';
@@ -132,13 +147,15 @@
         }
 
         function saveSchedule() {
+            const users = getUsers();
             const subjects = [];
             for (let i = 1; i <= 11; i++) {
                 if (document.getElementById(`subject${i}`).checked) {
                     subjects.push(document.getElementById(`subject${i}`).nextSibling.nodeValue.trim());
                 }
             }
-            usersSchedule[currentUser].schedule[days[currentDayIndex]] = subjects;
+            users[currentUser].schedule[days[currentDayIndex]] = subjects;
+            saveUsers(users);
             alert(`💾 מערכת השעות ליום ${days[currentDayIndex]} נשמרה בהצלחה!`);
             document.getElementById("next-day-button").style.display = 'inline-block';
         }
@@ -151,6 +168,7 @@
                 document.getElementById("next-day-button").style.display = 'none';
             } else {
                 alert(`🎉 מערכת השעות הושלמה בהצלחה!`);
+                console.log(getUsers()[currentUser].schedule);
                 document.getElementById("schedule-form").style.display = 'none';
             }
         }
