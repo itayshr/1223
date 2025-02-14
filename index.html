@@ -91,10 +91,12 @@
         let currentUser = "";
 
         function getUsers() {
+            // אם אין מידע ב-localStorage, מחזירים אובייקט ריק
             return JSON.parse(localStorage.getItem('users')) || {};
         }
 
         function saveUsers(users) {
+            // שמירת המשתמשים ב-localStorage
             localStorage.setItem('users', JSON.stringify(users));
         }
 
@@ -154,6 +156,8 @@
                     subjects.push(document.getElementById(`subject${i}`).nextSibling.nodeValue.trim());
                 }
             }
+
+            // שמירה למערכת השעות של היום הנוכחי
             users[currentUser].schedule[days[currentDayIndex]] = subjects;
             saveUsers(users);
             alert(`💾 מערכת השעות ליום ${days[currentDayIndex]} נשמרה בהצלחה!`);
