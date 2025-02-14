@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת שעות עם שמירה</title>
+    <title>מערכת שעות</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -34,26 +34,9 @@
         }
         input {
             margin: 5px;
-            padding: 5px;
-            font-size: 16px;
         }
         h1, h2 {
             color: #333;
-        }
-        #schedule-display {
-            margin-top: 20px;
-        }
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        .schedule-table th {
-            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -100,54 +83,29 @@
         <button onclick="goToNextDay()" style="display:none;" id="next-day-button">➡️ המשך</button>
     </div>
 
-    <div id="schedule-display" style="display:none;">
-        <h2>📅 מערכת שעות שלך</h2>
-        <table class="schedule-table">
-            <thead>
-                <tr>
-                    <th>יום</th>
-                    <th>מקצועות</th>
-                </tr>
-            </thead>
-            <tbody id="schedule-table-body"></tbody>
-        </table>
-    </div>
-
     <script>
+        const usersSchedule = {};
         const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
         let currentDayIndex = 0;
         let currentUser = "";
 
-        // פונקציות לשמירה וקריאה של המשתמשים
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('users')) || {};
-        }
-
-        function saveUsers(users) {
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-
         function registerOrLogin(isRegister) {
             document.getElementById("login-or-register").style.display = 'none';
-            document.getElementById(isRegister ? "register-form" : "login-form").style.display = 'block';
+            if (isRegister) {
+                document.getElementById("register-form").style.display = 'block';
+            } else {
+                document.getElementById("login-form").style.display = 'block';
+            }
         }
 
         function createNewUser() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            const users = getUsers();
-
-            if (!username || !password) {
-                alert("❌ יש למלא שם משתמש וסיסמה.");
-                return;
-            }
-
-            if (users[username]) {
+            if (usersSchedule[username]) {
                 alert("⚠️ שם המשתמש כבר קיים!");
             } else {
-                users[username] = { password, schedule: {} };
-                saveUsers(users);
                 currentUser = username;
+                usersSchedule[username] = { password: password, schedule: {} };
                 alert(`🎉 נרשמת בהצלחה, ${username}!`);
                 document.getElementById("register-form").style.display = 'none';
                 document.getElementById("schedule-form").style.display = 'block';
@@ -158,9 +116,7 @@
         function loginUser() {
             const username = document.getElementById("login-username").value;
             const password = document.getElementById("login-password").value;
-            const users = getUsers();
-
-            if (users[username] && users[username].password === password) {
+            if (usersSchedule[username] && usersSchedule[username].password === password) {
                 currentUser = username;
                 alert(`👋 שלום ${username}, ברוך הבא!`);
                 document.getElementById("login-form").style.display = 'none';
@@ -176,16 +132,13 @@
         }
 
         function saveSchedule() {
-            const users = getUsers();
             const subjects = [];
             for (let i = 1; i <= 11; i++) {
                 if (document.getElementById(`subject${i}`).checked) {
                     subjects.push(document.getElementById(`subject${i}`).nextSibling.nodeValue.trim());
                 }
             }
-
-            users[currentUser].schedule[days[currentDayIndex]] = subjects;
-            saveUsers(users);
+            usersSchedule[currentUser].schedule[days[currentDayIndex]] = subjects;
             alert(`💾 מערכת השעות ליום ${days[currentDayIndex]} נשמרה בהצלחה!`);
             document.getElementById("next-day-button").style.display = 'inline-block';
         }
@@ -198,7 +151,7 @@
                 document.getElementById("next-day-button").style.display = 'none';
             } else {
                 alert(`🎉 מערכת השעות הושלמה בהצלחה!`);
-                displaySchedule();
+                document.getElementById("schedule-form").style.display = 'none';
             }
         }
 
@@ -206,20 +159,6 @@
             for (let i = 1; i <= 11; i++) {
                 document.getElementById(`subject${i}`).checked = false;
             }
-        }
-
-        function displaySchedule() {
-            const users = getUsers();
-            const schedule = users[currentUser].schedule;
-
-            let tableContent = '';
-            for (const day in schedule) {
-                tableContent += `<tr><td>${day}</td><td>${schedule[day].join(', ')}</td></tr>`;
-            }
-
-            document.getElementById("schedule-table-body").innerHTML = tableContent;
-            document.getElementById("schedule-display").style.display = 'block';
-            document.getElementById("schedule-form").style.display = 'none';
         }
     </script>
 
