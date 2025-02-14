@@ -40,6 +40,21 @@
         h1, h2 {
             color: #333;
         }
+        #schedule-display {
+            margin-top: 20px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .schedule-table th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -85,18 +100,29 @@
         <button onclick="goToNextDay()" style="display:none;" id="next-day-button">➡️ המשך</button>
     </div>
 
+    <div id="schedule-display" style="display:none;">
+        <h2>📅 מערכת שעות שלך</h2>
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>יום</th>
+                    <th>מקצועות</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-table-body"></tbody>
+        </table>
+    </div>
+
     <script>
         const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
         let currentDayIndex = 0;
         let currentUser = "";
 
         function getUsers() {
-            // אם אין מידע ב-localStorage, מחזירים אובייקט ריק
             return JSON.parse(localStorage.getItem('users')) || {};
         }
 
         function saveUsers(users) {
-            // שמירת המשתמשים ב-localStorage
             localStorage.setItem('users', JSON.stringify(users));
         }
 
@@ -157,7 +183,6 @@
                 }
             }
 
-            // שמירה למערכת השעות של היום הנוכחי
             users[currentUser].schedule[days[currentDayIndex]] = subjects;
             saveUsers(users);
             alert(`💾 מערכת השעות ליום ${days[currentDayIndex]} נשמרה בהצלחה!`);
@@ -172,17 +197,5 @@
                 document.getElementById("next-day-button").style.display = 'none';
             } else {
                 alert(`🎉 מערכת השעות הושלמה בהצלחה!`);
-                console.log(getUsers()[currentUser].schedule);
-                document.getElementById("schedule-form").style.display = 'none';
-            }
-        }
-
-        function clearCheckboxes() {
-            for (let i = 1; i <= 11; i++) {
-                document.getElementById(`subject${i}`).checked = false;
-            }
-        }
-    </script>
-
-</body>
-</html>
+                displaySchedule();
+                document.getElementById("schedule-form
