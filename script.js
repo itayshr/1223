@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // קבלת כל האלמנטים שצריך לעבוד איתם בדף
     const authScreen = document.getElementById("authScreen");
     const mainContent = document.getElementById("mainContent");
     const loginForm = document.getElementById("loginForm");
@@ -28,25 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const setReminderBtn = document.getElementById("setReminder");
     const reminderDisplay = document.getElementById("reminderDisplay");
 
-    // מערך של משתמשים שנרשמו
     const users = [];
     let currentUser = null;
 
-    // הצגת טופס רישום
     showRegister.addEventListener("click", () => {
         loginForm.classList.add("hidden");
         registerForm.classList.remove("hidden");
     });
 
-    // הצגת טופס התחברות
     showLogin.addEventListener("click", () => {
         registerForm.classList.add("hidden");
         loginForm.classList.remove("hidden");
     });
 
-    // התחברות למערכת
     loginForm.addEventListener("submit", (event) => {
-        event.preventDefault(); // מונע את פעולת ברירת המחדל (שליחת טופס)
+        event.preventDefault();
         const username = loginUsername.value;
         const password = loginPassword.value;
 
@@ -60,13 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // רישום משתמש חדש
     registerForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const username = registerUsername.value;
         const password = registerPassword.value;
 
-        // בודק אם כבר יש משתמש עם שם המשתמש הזה
         if (users.some(user => user.username === username)) {
             alert("השם כבר קיים");
         } else {
@@ -76,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // קבלת מידע על מזג האוויר
     getWeatherBtn.addEventListener("click", async () => {
         const city = citySelect.value;
         const country = countrySelect.value;
@@ -95,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // הצעת לבוש על פי מזג האוויר
     function suggestOutfit(weather) {
         let suggestion = "";
         if (weather.current.temp_c < 10) {
@@ -106,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
             suggestion = "חמים! תלבש משהו קל.";
         }
 
-        // אם יש גשם, מוסיף הצעה לקחת מטרייה
         if (weather.current.condition.text.toLowerCase().includes("rain")) {
             suggestion += " אל תשכח מטרייה!";
         }
@@ -114,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
         outfitSuggestion.textContent = suggestion;
     }
 
-    // שמירת לוח זמנים לשבוע
     saveScheduleBtn.addEventListener("click", () => {
         const schedule = {
             sunday: sundaySubjectsInput.value.trim(),
@@ -130,14 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("לוח הזמנים נשמר!");
     });
 
-    // הגדרת תזכורת ליום הבא
     setReminderBtn.addEventListener("click", () => {
         const reminder = tomorrowReminder.value.trim();
         localStorage.setItem("tomorrowReminder", reminder);
         reminderDisplay.textContent = `תזכורת: ${reminder}`;
     });
 
-    // טעינת לוח הזמנים שנשמר ב-localStorage
     const savedSchedule = JSON.parse(localStorage.getItem("weeklySchedule"));
     if (savedSchedule) {
         sundaySubjectsInput.value = savedSchedule.sunday;
@@ -149,13 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
         saturdaySubjectsInput.value = savedSchedule.saturday;
     }
 
-    // הצגת תזכורת מה-localStorage
     const savedReminder = localStorage.getItem("tomorrowReminder");
     if (savedReminder) {
         reminderDisplay.textContent = `תזכורת: ${savedReminder}`;
     }
 
-    // שינוי בין מצב בהיר לכהה
     themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
     });
