@@ -118,6 +118,7 @@
         let currentDayIndex = 0;
         let currentUser = "";
 
+        // פונקציות לשמירה וקריאה של המשתמשים
         function getUsers() {
             return JSON.parse(localStorage.getItem('users')) || {};
         }
@@ -198,4 +199,29 @@
             } else {
                 alert(`🎉 מערכת השעות הושלמה בהצלחה!`);
                 displaySchedule();
-                document.getElementById("schedule-form
+            }
+        }
+
+        function clearCheckboxes() {
+            for (let i = 1; i <= 11; i++) {
+                document.getElementById(`subject${i}`).checked = false;
+            }
+        }
+
+        function displaySchedule() {
+            const users = getUsers();
+            const schedule = users[currentUser].schedule;
+
+            let tableContent = '';
+            for (const day in schedule) {
+                tableContent += `<tr><td>${day}</td><td>${schedule[day].join(', ')}</td></tr>`;
+            }
+
+            document.getElementById("schedule-table-body").innerHTML = tableContent;
+            document.getElementById("schedule-display").style.display = 'block';
+            document.getElementById("schedule-form").style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
