@@ -27,12 +27,12 @@ async def on_member_join(member):
         guild = member.guild
         
         # יצירת ה-Embed (הודעת הברוך הבא)
+        # שיניתי את הקישור של חוקי השרת ל-ID שסיפקת
         embed = discord.Embed(
             title="שלום רב !!",
             description=f"<@{member.id}>\n\n"
-                        f"**ברוך/ה הבא/ה לשרת ה Fivem Roleplay של קהילת**\n"
-                        f"**Gamers-Israel | 🇬**\n\n"
-                        f"אנו ממליצים לך לעבור על [חוקי השרת](https://google.com) לפני כניסתך לשרת המשחק "
+                        f"**ברוך/ה הבא/ה לשרת GameLife**\n"
+                        f"אנו ממליצים לך לעבור על <#1450833843690012834> לפני כניסתך לשרת המשחק "
                         f"בכדי לאפשר עבורך ועבור שאר השחקנים חווית משחק מהנה ואיכותית יותר\n\n"
                         f"**שיהיה בהצלחה !! ❤️**",
             color=discord.Color.blue()
@@ -40,11 +40,10 @@ async def on_member_join(member):
         
         # הגדרת לוגו השרת בצד (Thumbnail)
         if guild.icon:
-            embed.set_author(name=f"{guild.name} | Serious Roleplay", icon_url=guild.icon.url)
+            embed.set_author(name=f"{guild.name} ", icon_url=guild.icon.url)
             embed.set_thumbnail(url=guild.icon.url)
         
-        # --- הוספת הבאנר החדש מ-Postimages ---
-        # הקישור הישיר שסיפקת:
+        # הוספת הבאנר מהקישור שעדכנת
         embed.set_image(url="https://i.postimg.cc/nLBxnSyv/Gemini-Generated-Image-4rq61h4rq61h4rq6-(1).png")
         
         # פוטר בתחתית
