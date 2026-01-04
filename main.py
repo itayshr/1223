@@ -2,53 +2,53 @@ import discord
 import os
 from discord.ext import commands
 
-# הגדרת הרשאות (Intents)
+# הגדרת הרשאות
 intents = discord.Intents.default()
-intents.members = True          # מאפשר לזהות כניסת משתמשים
-intents.message_content = True  # מאפשר לקרוא תוכן הודעות (לפקודות)
+intents.members = True          
+intents.message_content = True  
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'--- הבוט מחובר בהצלחה! ---')
-    print(f'שם הבוט: {bot.user.name}')
-    print(f'-----------------------')
+    print(f'--- הבוט {bot.user.name} באוויר! ---')
 
 @bot.event
 async def on_member_join(member):
-    # כאן אנחנו מושכים את ה-ID מהמשתנה שנקרא WELCOME_CHANNEL_ID בתוך Railway
-    channel_id_env = os.getenv("WELCOME_CHANNEL_ID")
-    
-    if channel_id_env is None:
-        print("Error: WELCOME_CHANNEL_ID variable is not set in Railway!")
+    # שליפת ה-ID של הערוץ מ-Railway
+    channel_id = os.getenv("WELCOME_CHANNEL_ID")
+    if not channel_id:
         return
-
-    channel = bot.get_channel(int(channel_id_env))
+        
+    channel = bot.get_channel(int(channel_id))
     
     if channel:
-        guild = member.guild
-        member_count = guild.member_count
-        
-        # יצירת ה-Embed (הודעה מעוצבת)
+        # יצירת ה-Embed לפי העיצוב בתמונה
         embed = discord.Embed(
-            description=f"**שלום <@{member.id}>, ברוך הבא ל `GameLife |  FiveM Roleplay`! אנחנו `{member_count}` אנשים עכשיו**",
-            color=discord.Color.from_rgb(43, 45, 49) 
+            title="שלום רב !!",
+            description=f"<@{member.id}>\n\n"
+                        f"**ברוך/ה הבא/ה לשרת ה Fivem Roleplay של קהילת**\n"
+                        f"**Gamers-Israel | 🇬**\n\n"
+                        f"אנו ממליצים לך לעבור על [חוקי השרת](https://google.com) לפני כניסתך לשרת המשחק "
+                        f"בכדי לאפשר עבורך ועבור שאר השחקנים חווית משחק מהנה ואיכותית יותר\n\n"
+                        f"**שיהיה בהצלחה !! ❤️**",
+            color=discord.Color.blue() # צבע הפס בצד
         )
         
-        embed.set_footer(text="")
-        embed.set_thumbnail(url="https://i.imgur.com/Z95303n.png") 
+        # תמונת המשתמש בצד ימין למעלה (Small Icon)
+        embed.set_author(name="Gamers-Israel | Serious Roleplay", icon_url=member.display_avatar.url)
+        
+        # תמונת המשתמש כ-Thumbnail (התמונה הגדולה בצד)
+        embed.set_thumbnail(url=member.display_avatar.url)
+        
+        # פוטר עם לוגו (אופציונלי - שמתי את האוואטר של המשתמש גם כאן)
+        embed.set_footer(text="GAMERS ISRAEL", icon_url=member.display_avatar.url)
 
         await channel.send(embed=embed)
 
-# פקודת בדיקה - כתוב !test בשרת
+# פקודת בדיקה
 @bot.command()
 async def test(ctx):
     await on_member_join(ctx.author)
 
-# הרצת הבוט עם הטוקן מ-Railway
-token = os.getenv("DISCORD_TOKEN")
-if token:
-    bot.run(token)
-else:
-    print("Error: DISCORD_TOKEN variable is not set in Railway!")
+bot.run(os.getenv("DISCORD_TOKEN"))
