@@ -32,7 +32,7 @@ async def on_member_join(member):
         
         # יצירת ה-Embed (הודעה מעוצבת)
         embed = discord.Embed(
-            description=f"**שלום <@{member.id}>, ברוך הבא ל `GameLife |  FiveM Roleplay`! We're `{member_count}` members now.**",
+            description=f"**שלום <@{member.id}>, ברוך הבא ל `GameLife |  FiveM Roleplay`! אנחנו `{member_count}` אנשים עכשיו**",
             color=discord.Color.from_rgb(43, 45, 49) 
         )
         
