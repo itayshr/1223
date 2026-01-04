@@ -36,7 +36,7 @@ async def on_member_join(member):
             color=discord.Color.from_rgb(43, 45, 49) 
         )
         
-        embed.set_footer(text="Dev: Frozen")
+        embed.set_footer(text="")
         embed.set_thumbnail(url="https://i.imgur.com/Z95303n.png") 
 
         await channel.send(embed=embed)
