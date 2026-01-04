@@ -43,7 +43,7 @@ async def on_member_join(member):
             embed.set_thumbnail(url=guild.icon.url)
         
         # --- הוספת הבאנר של GameLife מתחת לכיתוב (התמונה הגדולה) ---
-        embed.set_image(url="https://storage.googleapis.com/public-assets-x/image_10a2a3.jpg")
+        embed.set_image(url="file:///C:/Users/itays/Downloads/Gemini_Generated_Image_4rq61h4rq61h4rq6%20(1).png")
         
         # פוטר בתחתית
         embed.set_footer(text="GAMERS ISRAEL", icon_url=guild.icon.url if guild.icon else None)
