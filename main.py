@@ -45,7 +45,7 @@ async def on_member_join(member):
         
         # --- הוספת הבאנר החדש מ-Postimages ---
         # הקישור הישיר שסיפקת:
-        embed.set_image(url="[Whats-App-Image-2026-01-04-at-16-19-29.jpg](https://postimg.cc/Cnkqdj8c)")
+        embed.set_image(url="https://i.postimg.cc/GtpHf1HN/Gemini-Generated-Image-4rq61h4rq61h4rq6-(1).png")
         
         # פוטר בתחתית
         footer_icon = guild.icon.url if guild.icon else None
