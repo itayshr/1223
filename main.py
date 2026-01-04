@@ -2,10 +2,10 @@ import discord
 import os
 from discord.ext import commands
 
-# הגדרת הרשאות
+# הגדרת הרשאות (Intents)
 intents = discord.Intents.default()
-intents.members = True          
-intents.message_content = True  
+intents.members = True          # קריטי לזיהוי כניסת משתמשים
+intents.message_content = True  # מאפשר לבוט לקרוא פקודות כמו !test
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -15,9 +15,10 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    # שליפת ID של הערוץ מ-Railway
+    # שליפת ID של הערוץ מתוך הגדרות Railway
     channel_id = os.getenv("WELCOME_CHANNEL_ID")
     if not channel_id:
+        print("אזהרה: לא הוגדר WELCOME_CHANNEL_ID במשתני הסביבה")
         return
         
     channel = bot.get_channel(int(channel_id))
@@ -25,7 +26,7 @@ async def on_member_join(member):
     if channel:
         guild = member.guild
         
-        # יצירת ה-Embed
+        # יצירת ה-Embed (הודעה מעוצבת)
         embed = discord.Embed(
             title="שלום רב !!",
             description=f"<@{member.id}>\n\n"
@@ -37,22 +38,25 @@ async def on_member_join(member):
             color=discord.Color.blue()
         )
         
-        # לוגו השרת בצד ימין למעלה
+        # הגדרות תצוגה: לוגו קטן למעלה וקישור לשרת
         if guild.icon:
             embed.set_author(name=f"{guild.name} | Serious Roleplay", icon_url=guild.icon.url)
             embed.set_thumbnail(url=guild.icon.url)
         
-        # --- הוספת הבאנר של GameLife מתחת לכיתוב (התמונה הגדולה) ---
-        embed.set_image(url="https://imgur.com/a/txVJqGF")
+        # --- הבאנר של GameLife (תמונה גדולה למטה) ---
+        embed.set_image(url="https://i.imgur.com/vH6Zf6A.png")
         
-        # פוטר בתחתית
-        embed.set_footer(text="GAMERS ISRAEL", icon_url=guild.icon.url if guild.icon else None)
+        # פוטר (כיתוב קטן בתחתית ההודעה)
+        footer_icon = guild.icon.url if guild.icon else None
+        embed.set_footer(text="GAMERS ISRAEL", icon_url=footer_icon)
 
+        # שליחת ההודעה לערוץ
         await channel.send(embed=embed)
 
-# פקודת בדיקה - כתוב !test בשרת
+# פקודת בדיקה - כתוב !test בשרת כדי לראות איך זה נראה
 @bot.command()
 async def test(ctx):
     await on_member_join(ctx.author)
 
+# הרצת הבוט עם הטוקן מתוך Railway
 bot.run(os.getenv("DISCORD_TOKEN"))
