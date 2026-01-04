@@ -15,7 +15,7 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     # כאן צריך להזין את ה-ID של הערוץ שבו תרצה שההודעה תשלח
-    channel_id = int(os.getenv("WELCOME_CHANNEL_ID"))
+    channel_id = int(os.getenv("1449406834032250931"))
     channel = bot.get_channel(channel_id)
     
     if channel:
