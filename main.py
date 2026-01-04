@@ -47,7 +47,7 @@ async def on_member_join(member):
         embed.set_image(url="https://i.postimg.cc/nLBxnSyv/Gemini-Generated-Image-4rq61h4rq61h4rq6-(1).png")
         
         footer_icon = guild.icon.url if guild.icon else None
-        embed.set_footer(text="GAMERS ISRAEL", icon_url=footer_icon)
+        embed.set_footer(text="GameLife", icon_url=footer_icon)
 
         await channel.send(embed=embed)
 
